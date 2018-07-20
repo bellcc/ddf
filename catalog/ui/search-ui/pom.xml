@@ -29,6 +29,7 @@
         <module>search-redirect</module>
         <module>search-htmltransformer</module>
         <module>search-endpoint</module>
+        <module>search-resultset</module>
     </modules>
     <dependencyManagement>
         <dependencies>
