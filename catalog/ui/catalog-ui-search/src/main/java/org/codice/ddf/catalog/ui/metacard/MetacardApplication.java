@@ -57,6 +57,8 @@ import ddf.catalog.data.types.Core;
 import ddf.catalog.federation.FederationException;
 import ddf.catalog.filter.FilterBuilder;
 import ddf.catalog.operation.DeleteResponse;
+import ddf.catalog.operation.Query;
+import ddf.catalog.operation.QueryRequest;
 import ddf.catalog.operation.QueryResponse;
 import ddf.catalog.operation.ResourceResponse;
 import ddf.catalog.operation.UpdateResponse;
@@ -84,6 +86,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -221,6 +224,69 @@ public class MetacardApplication implements SparkApplication {
   @Override
   public void init() {
     get("/metacardtype", (req, res) -> util.getJson(util.getMetacardTypeMap()));
+
+    get(
+        "/test/:ids/:mimetype",
+        (req, res) -> {
+          String ids = req.params(":ids");
+          String sources = req.queryParams("sources");
+          String mime = req.params(":mimetype");
+          List<String> sourceList = new ArrayList<>();
+          if (!StringUtils.isEmpty(sources)) {
+            sourceList = Arrays.asList(sources.split(","));
+          }
+          List<String> idList = Arrays.asList(ids.split(","));
+          List<Filter> filterList = new ArrayList<>();
+
+          for (String id : idList) {
+            Filter filter = filterBuilder.attribute(Core.ID).is().like().text(id);
+            filterList.add(filter);
+          }
+          
+          Filter finalFilter = filterBuilder.anyOf(filterList);
+          Query query = new QueryImpl(finalFilter);
+          QueryRequest queryRequest;
+
+          if (sourceList.isEmpty()) {
+            LOGGER.trace("No sources provided, performing enterprise query.");
+            queryRequest = new QueryRequestImpl(query, true);
+          } else {
+            LOGGER.trace("Performing query on specified source: {}", sourceList);
+            queryRequest = new QueryRequestImpl(query, sourceList);
+          }
+
+          List<Metacard> metacardList = new ArrayList<>();
+
+          try {
+            QueryResponse queryResponse = catalogFramework.query(queryRequest);
+            metacardList =
+                queryResponse
+                    .getResults()
+                    .stream()
+                    .map(Result::getMetacard)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+          } catch (UnsupportedQueryException | SourceUnavailableException | FederationException e) {
+            LOGGER.debug("Error querying for metacards", e);
+          }
+
+          for (Metacard metacard : metacardList) {
+            System.out.println(metacard.getAttribute(Core.ID));
+          }
+
+          String response;
+
+          switch (mime) {
+            case "html":
+              response = util.getResponseWrapper(SUCCESS_RESPONSE_TYPE, "here is your html boi.");
+              break;
+            default:
+              res.status(400);
+              response = util.getResponseWrapper(ERROR_RESPONSE_TYPE, "unsupported file type.");
+              break;
+          }
+          return response;
+        });
 
     get(
         "/metacard/:id",
