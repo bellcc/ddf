@@ -86,6 +86,8 @@ public class QueryApplication implements SparkApplication, Function {
 
   private BundleContext bundleContext;
 
+  private QueryResponse queryResponse;
+
   private ObjectMapper mapper =
       new ObjectMapperImpl(
           new JsonParserFactory().usePropertyOnly(),
@@ -126,11 +128,12 @@ public class QueryApplication implements SparkApplication, Function {
               queryResponseTransformers) {
             String m = (String) queryResponseTransformer.getProperty("mime-type");
             System.out.println("TYPE: " + m);
+
             if (m.equals(mimeType)) {
               BinaryContent binaryContent =
                   bundleContext
                       .getService(queryResponseTransformer)
-                      .transform(cqlQueryResponse.getQueryResponse(), new HashMap<>());
+                      .transform(this.queryResponse, new HashMap<>());
             }
           }
           return mapper.toJson(cqlQueryResponse);
@@ -265,6 +268,8 @@ public class QueryApplication implements SparkApplication, Function {
                 .orElse(Collections.emptyMap()));
 
     stopwatch.stop();
+
+    this.queryResponse = response;
 
     return new CqlQueryResponse(
         cqlRequest.getId(),

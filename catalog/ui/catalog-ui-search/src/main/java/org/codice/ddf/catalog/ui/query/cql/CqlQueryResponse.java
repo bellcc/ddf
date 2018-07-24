@@ -50,8 +50,6 @@ public class CqlQueryResponse {
 
   private final Status status;
 
-  private final QueryResponse queryResponse;
-
   public CqlQueryResponse(
       String id,
       QueryRequest request,
@@ -62,7 +60,6 @@ public class CqlQueryResponse {
       FilterAdapter filterAdapter,
       ActionRegistry actionRegistry) {
     this.id = id;
-    this.queryResponse = queryResponse;
 
     status = new Status(queryResponse, source, elapsedTime);
 
@@ -134,10 +131,6 @@ public class CqlQueryResponse {
       LOGGER.debug("Unable to parse search terms", e);
     }
     return searchTerms;
-  }
-
-  public QueryResponse getQueryResponse() {
-    return this.queryResponse;
   }
 
   public List<CqlResult> getResults() {
