@@ -105,7 +105,7 @@ public class HtmlMetacardTransformer implements MetacardTransformer {
     }
   }
 
-  private String buildHtml(Metacard metacard) {
+  String buildHtml(Metacard metacard) {
 
     try {
       Context context = Context.newBuilder(metacard).resolver(resolvers).build();
