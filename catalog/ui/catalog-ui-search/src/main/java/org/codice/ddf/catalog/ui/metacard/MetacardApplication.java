@@ -242,7 +242,7 @@ public class MetacardApplication implements SparkApplication {
             Filter filter = filterBuilder.attribute(Core.ID).is().like().text(id);
             filterList.add(filter);
           }
-          
+
           Filter finalFilter = filterBuilder.anyOf(filterList);
           Query query = new QueryImpl(finalFilter);
           QueryRequest queryRequest;

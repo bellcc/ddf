@@ -24,6 +24,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import ddf.action.ActionRegistry;
 import ddf.catalog.CatalogFramework;
+import ddf.catalog.data.BinaryContent;
 import ddf.catalog.data.Result;
 import ddf.catalog.federation.FederationException;
 import ddf.catalog.filter.FilterAdapter;
@@ -33,16 +34,19 @@ import ddf.catalog.operation.QueryResponse;
 import ddf.catalog.operation.impl.QueryResponseImpl;
 import ddf.catalog.source.SourceUnavailableException;
 import ddf.catalog.source.UnsupportedQueryException;
+import ddf.catalog.transform.QueryResponseTransformer;
 import ddf.catalog.util.impl.QueryFunction;
 import ddf.catalog.util.impl.ResultIterable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 import org.boon.json.JsonParserFactory;
 import org.boon.json.JsonSerializerFactory;
 import org.boon.json.ObjectMapper;
@@ -56,6 +60,8 @@ import org.codice.ddf.catalog.ui.ws.JsonRpc;
 import org.codice.ddf.spatial.geocoding.Suggestion;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.simple.SimpleFeature;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.servlet.SparkApplication;
@@ -76,6 +82,10 @@ public class QueryApplication implements SparkApplication, Function {
 
   private FeatureService featureService;
 
+  private List<ServiceReference> queryResponseTransformers;
+
+  private BundleContext bundleContext;
+
   private ObjectMapper mapper =
       new ObjectMapperImpl(
           new JsonParserFactory().usePropertyOnly(),
@@ -86,6 +96,12 @@ public class QueryApplication implements SparkApplication, Function {
               .setJsonFormatForDates(false));
 
   private EndpointUtil util;
+
+  public QueryApplication(
+      List<ServiceReference> queryResponseTransformers, BundleContext bundleContext) {
+    this.queryResponseTransformers = queryResponseTransformers;
+    this.bundleContext = bundleContext;
+  }
 
   @Override
   public void init() {
@@ -98,8 +114,25 @@ public class QueryApplication implements SparkApplication, Function {
         "/cql",
         APPLICATION_JSON,
         (req, res) -> {
-          CqlRequest cqlRequest = mapper.readValue(util.safeGetBody(req), CqlRequest.class);
+          String mimeType = req.queryParams(":ids");
+          String body = util.safeGetBody(req);
+          mimeType = "";
+          CqlRequest cqlRequest = mapper.readValue(body, CqlRequest.class);
           CqlQueryResponse cqlQueryResponse = executeCqlQuery(cqlRequest);
+          if (StringUtils.isEmpty(mimeType)) {
+            return mapper.toJson(cqlQueryResponse);
+          }
+          for (ServiceReference<QueryResponseTransformer> queryResponseTransformer :
+              queryResponseTransformers) {
+            String m = (String) queryResponseTransformer.getProperty("mime-type");
+            System.out.println("TYPE: " + m);
+            if (m.equals(mimeType)) {
+              BinaryContent binaryContent =
+                  bundleContext
+                      .getService(queryResponseTransformer)
+                      .transform(cqlQueryResponse.getQueryResponse(), new HashMap<>());
+            }
+          }
           return mapper.toJson(cqlQueryResponse);
         });
 
