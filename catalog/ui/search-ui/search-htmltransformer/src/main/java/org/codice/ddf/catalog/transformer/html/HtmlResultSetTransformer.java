@@ -16,7 +16,6 @@ package org.codice.ddf.catalog.transformer.html;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Options;
-import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.ValueResolver;
 import com.github.jknack.handlebars.context.JavaBeanValueResolver;
 import com.github.jknack.handlebars.context.MapValueResolver;
@@ -37,15 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class HtmlResultSetTransformer implements QueryResponseTransformer {
-
-  private Template template;
-
-  private Handlebars handlebars;
-
-  private ValueResolver[] resolvers;
-
-  private static ClassPathTemplateLoader templateLoader;
+public class HtmlResultSetTransformer extends HtmlTransformer implements QueryResponseTransformer {
 
   public HtmlResultSetTransformer() {
     templateLoader = new ClassPathTemplateLoader();
@@ -55,18 +46,18 @@ public class HtmlResultSetTransformer implements QueryResponseTransformer {
     handlebars = new Handlebars(templateLoader);
     handlebars.registerHelpers(new RecordViewHelpers());
 
-    handlebars.registerHelper("isMetacard", new IfHelper() {
-      @Override
-      public CharSequence apply(Object context, Options options) throws IOException {
-        return (context instanceof Metacard) ? options.fn() : options.inverse();
-      }
-    });
+    handlebars.registerHelper(
+        "isMetacard",
+        new IfHelper() {
+          @Override
+          public CharSequence apply(Object context, Options options) throws IOException {
+            return (context instanceof Metacard) ? options.fn() : options.inverse();
+          }
+        });
 
     resolvers =
         new ValueResolver[] {
-            new MetacardValueResolver(),
-            MapValueResolver.INSTANCE,
-            JavaBeanValueResolver.INSTANCE
+          new MetacardValueResolver(), MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE
         };
 
     try {
@@ -78,8 +69,9 @@ public class HtmlResultSetTransformer implements QueryResponseTransformer {
   }
 
   @Override
-  public BinaryContent transform(SourceResponse upstreamResponse,
-      Map<String, Serializable> arguments) throws CatalogTransformerException {
+  public BinaryContent transform(
+      SourceResponse upstreamResponse, Map<String, Serializable> arguments)
+      throws CatalogTransformerException {
 
     List<Metacard> metacards =
         upstreamResponse
@@ -90,8 +82,7 @@ public class HtmlResultSetTransformer implements QueryResponseTransformer {
 
     String html = buildHtml(metacards);
 
-    return new BinaryContentImpl(
-        new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)));
+    return new BinaryContentImpl(new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)));
   }
 
   public String buildHtml(List<Metacard> metacardList) {

@@ -15,11 +15,11 @@ package org.codice.ddf.catalog.transformer.html;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.Template;
+import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.ValueResolver;
 import com.github.jknack.handlebars.context.JavaBeanValueResolver;
 import com.github.jknack.handlebars.context.MapValueResolver;
-import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
+import com.github.jknack.handlebars.helper.IfHelper;
 import ddf.catalog.data.BinaryContent;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.BinaryContentImpl;
@@ -30,50 +30,21 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class HtmlMetacardTransformer implements MetacardTransformer {
-
-  private static final MimeType DEFAULT_MIME_TYPE;
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(HtmlMetacardTransformer.class);
-
-  private static final String TEMPLATE_DIRECTORY = "/templates";
-
-  private static final String TEMPLATE_SUFFIX = ".hbt";
-
-  private static final String RECORD_TEMPLATE = "recordContents";
-
-  private static final String RECORD_HTML_TEMPLATE = "recordHtml";
-
-  private static ClassPathTemplateLoader templateLoader;
-
-  static {
-    MimeType mimeType = null;
-    try {
-      mimeType = new MimeType("text/html");
-    } catch (MimeTypeParseException e) {
-      LOGGER.info("Failed to parse mimeType", e);
-    }
-    DEFAULT_MIME_TYPE = mimeType;
-
-    templateLoader = new ClassPathTemplateLoader();
-    templateLoader.setPrefix(TEMPLATE_DIRECTORY);
-    templateLoader.setSuffix(TEMPLATE_SUFFIX);
-  }
-
-  private Handlebars handlebars;
-
-  private Template template;
-
-  private ValueResolver[] resolvers;
+public class HtmlMetacardTransformer extends HtmlTransformer implements MetacardTransformer {
 
   public HtmlMetacardTransformer() {
     handlebars = new Handlebars(templateLoader);
     handlebars.registerHelpers(new RecordViewHelpers());
+
+    handlebars.registerHelper(
+        "isMetacard",
+        new IfHelper() {
+          @Override
+          public CharSequence apply(Object context, Options options) throws IOException {
+            return (context instanceof Metacard) ? options.fn() : options.inverse();
+          }
+        });
 
     resolvers =
         new ValueResolver[] {
