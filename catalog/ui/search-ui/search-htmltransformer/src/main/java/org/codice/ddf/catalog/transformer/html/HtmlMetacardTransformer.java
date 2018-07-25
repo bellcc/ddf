@@ -13,50 +13,17 @@
  */
 package org.codice.ddf.catalog.transformer.html;
 
-import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.Options;
-import com.github.jknack.handlebars.ValueResolver;
-import com.github.jknack.handlebars.context.JavaBeanValueResolver;
-import com.github.jknack.handlebars.context.MapValueResolver;
-import com.github.jknack.handlebars.helper.IfHelper;
 import ddf.catalog.data.BinaryContent;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.BinaryContentImpl;
 import ddf.catalog.transform.CatalogTransformerException;
 import ddf.catalog.transform.MetacardTransformer;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class HtmlMetacardTransformer extends HtmlTransformer implements MetacardTransformer {
-
-  public HtmlMetacardTransformer() {
-    handlebars = new Handlebars(templateLoader);
-    handlebars.registerHelpers(new RecordViewHelpers());
-
-    handlebars.registerHelper(
-        "isMetacard",
-        new IfHelper() {
-          @Override
-          public CharSequence apply(Object context, Options options) throws IOException {
-            return (context instanceof Metacard) ? options.fn() : options.inverse();
-          }
-        });
-
-    resolvers =
-        new ValueResolver[] {
-          new MetacardValueResolver(), MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE
-        };
-    try {
-      handlebars.compile(RECORD_TEMPLATE);
-      template = handlebars.compile(RECORD_HTML_TEMPLATE);
-    } catch (IOException e) {
-      LOGGER.debug("Failed to load templates", e);
-    }
-  }
 
   @Override
   public BinaryContent transform(Metacard metacard, Map<String, Serializable> arguments)
@@ -74,17 +41,5 @@ public class HtmlMetacardTransformer extends HtmlTransformer implements Metacard
     } else {
       throw new CatalogTransformerException("No content.");
     }
-  }
-
-  String buildHtml(Metacard metacard) {
-
-    try {
-      Context context = Context.newBuilder(metacard).resolver(resolvers).build();
-      return template.apply(context);
-    } catch (IOException e) {
-      LOGGER.debug("Failed to apply template", e);
-    }
-
-    return null;
   }
 }

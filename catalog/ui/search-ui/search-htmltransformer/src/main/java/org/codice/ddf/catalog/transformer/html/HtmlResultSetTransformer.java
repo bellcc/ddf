@@ -13,14 +13,6 @@
  */
 package org.codice.ddf.catalog.transformer.html;
 
-import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.Options;
-import com.github.jknack.handlebars.ValueResolver;
-import com.github.jknack.handlebars.context.JavaBeanValueResolver;
-import com.github.jknack.handlebars.context.MapValueResolver;
-import com.github.jknack.handlebars.helper.IfHelper;
-import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import ddf.catalog.data.BinaryContent;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.Result;
@@ -29,7 +21,6 @@ import ddf.catalog.operation.SourceResponse;
 import ddf.catalog.transform.CatalogTransformerException;
 import ddf.catalog.transform.QueryResponseTransformer;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -38,40 +29,15 @@ import java.util.stream.Collectors;
 
 public class HtmlResultSetTransformer extends HtmlTransformer implements QueryResponseTransformer {
 
-  public HtmlResultSetTransformer() {
-    templateLoader = new ClassPathTemplateLoader();
-    templateLoader.setPrefix("/templates");
-    templateLoader.setSuffix(".hbt");
-
-    handlebars = new Handlebars(templateLoader);
-    handlebars.registerHelpers(new RecordViewHelpers());
-
-    handlebars.registerHelper(
-        "isMetacard",
-        new IfHelper() {
-          @Override
-          public CharSequence apply(Object context, Options options) throws IOException {
-            return (context instanceof Metacard) ? options.fn() : options.inverse();
-          }
-        });
-
-    resolvers =
-        new ValueResolver[] {
-          new MetacardValueResolver(), MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE
-        };
-
-    try {
-      handlebars.compile("recordContents");
-      template = handlebars.compile("recordHtml");
-    } catch (IOException e) {
-      System.err.println(e);
-    }
-  }
-
   @Override
   public BinaryContent transform(
       SourceResponse upstreamResponse, Map<String, Serializable> arguments)
       throws CatalogTransformerException {
+
+    if (upstreamResponse == null) {
+      throw new CatalogTransformerException(
+          "Cannot transform null source response for metacard result set");
+    }
 
     List<Metacard> metacards =
         upstreamResponse
@@ -82,18 +48,11 @@ public class HtmlResultSetTransformer extends HtmlTransformer implements QueryRe
 
     String html = buildHtml(metacards);
 
-    return new BinaryContentImpl(new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)));
-  }
-
-  public String buildHtml(List<Metacard> metacardList) {
-
-    try {
-      Context context = Context.newBuilder(metacardList).resolver(resolvers).build();
-      return template.apply(context);
-    } catch (IOException e) {
-
+    if (html != null) {
+      return new BinaryContentImpl(
+          new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)), DEFAULT_MIME_TYPE);
+    } else {
+      throw new CatalogTransformerException("No content available");
     }
-
-    return null;
   }
 }
