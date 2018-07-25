@@ -38,6 +38,8 @@ import ddf.catalog.transform.QueryResponseTransformer;
 import ddf.catalog.util.impl.QueryFunction;
 import ddf.catalog.util.impl.ResultIterable;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,6 +48,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPOutputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.boon.json.JsonParserFactory;
 import org.boon.json.JsonSerializerFactory;
@@ -116,9 +120,9 @@ public class QueryApplication implements SparkApplication, Function {
         "/cql",
         APPLICATION_JSON,
         (req, res) -> {
-          String mimeType = req.queryParams(":ids");
+          String mimeType = req.queryParams(":transform");
           String body = util.safeGetBody(req);
-          mimeType = "";
+          mimeType = "text/xml";
           CqlRequest cqlRequest = mapper.readValue(body, CqlRequest.class);
           CqlQueryResponse cqlQueryResponse = executeCqlQuery(cqlRequest);
           if (StringUtils.isEmpty(mimeType)) {
@@ -130,13 +134,42 @@ public class QueryApplication implements SparkApplication, Function {
             System.out.println("TYPE: " + m);
 
             if (m.equals(mimeType)) {
-              BinaryContent binaryContent =
+              BinaryContent content =
                   bundleContext
                       .getService(queryResponseTransformer)
                       .transform(this.queryResponse, new HashMap<>());
+
+              res.status(200);
+
+              String acceptEncoding = req.headers("Accept-Encoding");
+
+              boolean shouldGzip =
+                  StringUtils.isNotBlank(acceptEncoding)
+                      && acceptEncoding.toLowerCase().contains("gzip");
+
+              res.type(mimeType);
+              String attachment = "attachment;filename=somefile.xml";
+              res.header("Content-Disposition", attachment);
+              if (shouldGzip) {
+                res.raw().addHeader("Content-Encoding", "gzip");
+              }
+
+              try (OutputStream servletOutputStream = res.raw().getOutputStream();
+                  InputStream resultStream = content.getInputStream()) {
+                if (shouldGzip) {
+                  try (OutputStream gzipServletOutputStream =
+                      new GZIPOutputStream(servletOutputStream)) {
+                    IOUtils.copy(resultStream, gzipServletOutputStream);
+                  }
+                } else {
+                  IOUtils.copy(resultStream, servletOutputStream);
+                }
+              }
+              return "";
             }
           }
-          return mapper.toJson(cqlQueryResponse);
+          res.status(500);
+          return mapper.toJson(ImmutableMap.of("message", "No services available"));
         });
 
     after(
