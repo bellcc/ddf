@@ -30,7 +30,7 @@ deny {
 }
 
 grant
-  codeBase "file:/platform-migration" {
+  codeBase "file:/platform-migration/platform-migratable-api" {
     permission java.io.FilePermission "<<ALL FILES>>", "read, readlink";
     permission java.io.FilePermission "${ddf.home}", "write, delete";
     permission java.io.FilePermission "${ddf.home.perm}-", "write, delete";
@@ -46,7 +46,7 @@ grant
 }
 
 grant
-  codeBase "file:/security-migratable/catalog-rest-endpoint" {
+  codeBase "file:/security-migratable/catalog-rest-endpoint/registry-publication-action-provider" {
     permission java.io.FilePermission "${ddf.home.perm}etc${/}ws-security${/}server${/}encryption.properties", "read";
     permission java.io.FilePermission "${ddf.home.perm}etc${/}ws-security${/}server${/}signature.properties", "read";
     permission java.io.FilePermission "${ddf.home.perm}etc${/}ws-security${/}issuer${/}encryption.properties", "read";
@@ -100,7 +100,7 @@ grant codeBase "file:/registry-api-impl/catalog-plugin-metacardbackup-filestorag
     permission java.io.FilePermission "${ddf.home.perm}etc${/}org.apache.cxf.osgi.cfg", "read";
 }
 
-grant codeBase "file:/registry-federation-admin-impl" {
+grant codeBase "file:/registry-federation-admin-impl/registry-publication-action-provider" {
     permission java.io.FilePermission "${ddf.home.perm}etc${/}registry${/}-", "read";
     permission java.io.FilePermission "${ddf.home.perm}etc${/}keystores${/}-", "read";
     permission java.io.FilePermission "${ddf.home.perm}etc${/}ws-security${/}server${/}-", "read";
@@ -183,9 +183,7 @@ grant codeBase "file:/org.apache.karaf.jaas.command" {
 
 grant codeBase "file:/pax-logging-log4j2" {
     permission java.io.FilePermission "${ddf.home.perm}data${/}log${/}-", "read,write";
-    permission java.io.FilePermission "${ddf.home.perm}data${/}log${/}ingest_error.log", "read,write";
-    permission java.io.FilePermission "${ddf.home.perm}data${/}log${/}artemis.log", "read,write";
-    permission java.io.FilePermission "${ddf.home.perm}data${/}log${/}security.log", "read,write";
+    permission java.io.FilePermission "${ddf.home.perm}etc${/}log4j2.config.xml", "read";
     permission java.io.FilePermission "pax-logging.properties", "read";
     permission java.net.SocketPermission "*", "listen,resolve";
 }
@@ -347,7 +345,7 @@ grant codeBase "file:/catalog-core-standardframework/platform-solr-server-standa
     permission java.io.FilePermission "${ddf.home.perm}etc${/}ws-security${/}server${/}-", "read";
 }
 
-grant codeBase "file:/catalog-plugin-videothumbnail/catalog-rest-endpoint/catalog-core-standardframework" {
+grant codeBase "file:/catalog-plugin-videothumbnail/catalog-rest-endpoint/catalog-core-standardframework/catalog-ui-search" {
     permission java.io.FilePermission "${ddf.home.perm}bin_third_party", "read,write";
     permission java.io.FilePermission "${ddf.home.perm}bin_third_party${/}-", "read,write,execute";
     permission java.io.FilePermission "${ddf.home.perm}bin_third_party${/}ffmpeg${/}-", "read,write,execute";
