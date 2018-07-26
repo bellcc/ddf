@@ -40,6 +40,7 @@ import ddf.catalog.util.impl.ResultIterable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tika.mime.MimeTypes;
 import org.boon.json.JsonParserFactory;
 import org.boon.json.JsonSerializerFactory;
 import org.boon.json.ObjectMapper;
@@ -120,53 +122,59 @@ public class QueryApplication implements SparkApplication, Function {
         "/cql",
         APPLICATION_JSON,
         (req, res) -> {
-          String mimeType = req.queryParams(":transform");
+          String transformerId = req.queryParams(":transform");
           String body = util.safeGetBody(req);
-          mimeType = "text/xml";
           CqlRequest cqlRequest = mapper.readValue(body, CqlRequest.class);
           CqlQueryResponse cqlQueryResponse = executeCqlQuery(cqlRequest);
-          if (StringUtils.isEmpty(mimeType)) {
+          if (StringUtils.isEmpty(transformerId)) {
             return mapper.toJson(cqlQueryResponse);
           }
           for (ServiceReference<QueryResponseTransformer> queryResponseTransformer :
               queryResponseTransformers) {
-            String m = (String) queryResponseTransformer.getProperty("mime-type");
-            System.out.println("TYPE: " + m);
+            String id = (String) queryResponseTransformer.getProperty("id");
 
-            if (m.equals(mimeType)) {
-              BinaryContent content =
-                  bundleContext
-                      .getService(queryResponseTransformer)
-                      .transform(this.queryResponse, new HashMap<>());
-
-              res.status(200);
-
-              String acceptEncoding = req.headers("Accept-Encoding");
-
-              boolean shouldGzip =
-                  StringUtils.isNotBlank(acceptEncoding)
-                      && acceptEncoding.toLowerCase().contains("gzip");
-
-              res.type(mimeType);
-              String attachment = "attachment;filename=somefile.xml";
-              res.header("Content-Disposition", attachment);
-              if (shouldGzip) {
-                res.raw().addHeader("Content-Encoding", "gzip");
-              }
-
-              try (OutputStream servletOutputStream = res.raw().getOutputStream();
-                  InputStream resultStream = content.getInputStream()) {
-                if (shouldGzip) {
-                  try (OutputStream gzipServletOutputStream =
-                      new GZIPOutputStream(servletOutputStream)) {
-                    IOUtils.copy(resultStream, gzipServletOutputStream);
-                  }
-                } else {
-                  IOUtils.copy(resultStream, servletOutputStream);
-                }
-              }
-              return "";
+            if (!id.equals(transformerId)) {
+              continue;
             }
+
+            BinaryContent content =
+                bundleContext
+                    .getService(queryResponseTransformer)
+                    .transform(this.queryResponse, new HashMap<>());
+
+            String mimeType = (String) queryResponseTransformer.getProperty("mime-type");
+            MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+            String fileExt = allTypes.forName(mimeType).getExtension();
+
+            res.status(200);
+
+            String acceptEncoding = req.headers("Accept-Encoding");
+
+            boolean shouldGzip =
+                StringUtils.isNotBlank(acceptEncoding)
+                    && acceptEncoding.toLowerCase().contains("gzip");
+
+            res.type(mimeType);
+            String attachment =
+                String.format("attachment;filename=export-%s%s", Instant.now().toString(), fileExt);
+            res.header("Content-Disposition", attachment);
+
+            if (shouldGzip) {
+              res.raw().addHeader("Content-Encoding", "gzip");
+            }
+
+            try (OutputStream servletOutputStream = res.raw().getOutputStream();
+                InputStream resultStream = content.getInputStream()) {
+              if (shouldGzip) {
+                try (OutputStream gzipServletOutputStream =
+                    new GZIPOutputStream(servletOutputStream)) {
+                  IOUtils.copy(resultStream, gzipServletOutputStream);
+                }
+              } else {
+                IOUtils.copy(resultStream, servletOutputStream);
+              }
+            }
+            return "";
           }
           res.status(500);
           return mapper.toJson(ImmutableMap.of("message", "No services available"));
