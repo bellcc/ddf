@@ -20,11 +20,22 @@
           class="org.codice.ddf.catalog.transformer.html.HtmlMetacardTransformer">
 	</bean>
 
+	<bean id="resultset"
+		class="org.codice.ddf.catalog.transformer.html.HtmlResultSetTransformer">
+	</bean>
+
 	<service ref="transformer" interface="ddf.catalog.transform.MetacardTransformer">
 		<service-properties>
 			<entry key="id" value="html"/>
             <!-- shortname only exists for backwards compatibility -->
             <entry key="shortname" value="html"/>
+			<entry key="mime-type" value="text/html"/>
+		</service-properties>
+	</service>
+	<service ref="resultset" interface="ddf.catalog.transform.QueryResponseTransformer">
+		<service-properties>
+			<entry key="id" value="resultset-html"/>
+			<entry key="shortname" value="resultset-html"/>
 			<entry key="mime-type" value="text/html"/>
 		</service-properties>
 	</service>

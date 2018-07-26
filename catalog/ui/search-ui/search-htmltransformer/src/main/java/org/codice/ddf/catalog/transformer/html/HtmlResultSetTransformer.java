@@ -15,31 +15,44 @@ package org.codice.ddf.catalog.transformer.html;
 
 import ddf.catalog.data.BinaryContent;
 import ddf.catalog.data.Metacard;
+import ddf.catalog.data.Result;
 import ddf.catalog.data.impl.BinaryContentImpl;
+import ddf.catalog.operation.SourceResponse;
 import ddf.catalog.transform.CatalogTransformerException;
-import ddf.catalog.transform.MetacardTransformer;
+import ddf.catalog.transform.QueryResponseTransformer;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class HtmlMetacardTransformer extends HtmlTransformer implements MetacardTransformer {
+public class HtmlResultSetTransformer extends HtmlTransformer implements QueryResponseTransformer {
 
   @Override
-  public BinaryContent transform(Metacard metacard, Map<String, Serializable> arguments)
+  public BinaryContent transform(
+      SourceResponse upstreamResponse, Map<String, Serializable> arguments)
       throws CatalogTransformerException {
 
-    if (metacard == null) {
-      throw new CatalogTransformerException("Cannot transform null metacard.");
+    if (upstreamResponse == null) {
+      throw new CatalogTransformerException(
+          "Cannot transform null source response for metacard result set");
     }
 
-    String html = buildHtml(metacard);
+    List<Metacard> metacards =
+        upstreamResponse
+            .getResults()
+            .stream()
+            .map(Result::getMetacard)
+            .collect(Collectors.toList());
+
+    String html = buildHtml(metacards);
 
     if (html != null) {
       return new BinaryContentImpl(
           new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)), DEFAULT_MIME_TYPE);
     } else {
-      throw new CatalogTransformerException("No content.");
+      throw new CatalogTransformerException("No content available");
     }
   }
 }
