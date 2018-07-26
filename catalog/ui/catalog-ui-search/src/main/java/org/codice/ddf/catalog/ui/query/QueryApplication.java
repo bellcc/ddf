@@ -176,8 +176,8 @@ public class QueryApplication implements SparkApplication, Function {
             }
             return "";
           }
-          res.status(500);
-          return mapper.toJson(ImmutableMap.of("message", "No services available"));
+          res.status(404);
+          return mapper.toJson(ImmutableMap.of("message", "Service not found"));
         });
 
     after(
