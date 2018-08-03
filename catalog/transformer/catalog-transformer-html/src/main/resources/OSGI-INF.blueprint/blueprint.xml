@@ -8,7 +8,8 @@
  * any manner and for any purpose, and to have or permit others to do so.
  */
 -->
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+  xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0">
 
   <bean id="transformer"
     class="ddf.catalog.transformer.html.HtmlMetacardTransformer">
@@ -22,4 +23,143 @@
       <entry key="mime-type" value="text/html"/>
     </service-properties>
   </service>
+
+  <bean id="htmlMetacardTransformer" class="ddf.catalog.transformer.html.HtmlMetacardTransformer">
+    <cm:managed-properties persistent-id="ddf.catalog.transformer.html.HtmlMetacardTransformer"
+      update-strategy="container-managed"/>
+
+    <property name="Associations">
+      <list>
+        <value>metacard.associations.related</value>
+        <value>metacard.associations.derived</value>
+        <value>associations.external</value>
+      </list>
+    </property>
+
+    <property name="Contact">
+      <list>
+        <value>contact.contributor-address</value>
+        <value>contact.contributor-email</value>
+        <value>contact.contributor-name</value>
+        <value>contact.contributor-phone</value>
+        <value>contact.creator-address</value>
+        <value>contact.creator-email</value>
+        <value>contact.creator-name</value>
+        <value>contact.creator-phone</value>
+        <value>contact.point-of-contact-address</value>
+        <value>contact.point-of-contact-email</value>
+        <value>contact.point-of-contact-name</value>
+        <value>contact.point-of-contact-phone</value>
+        <value>contact.publisher-address</value>
+        <value>contact.publisher-email</value>
+        <value>contact.publisher-name</value>
+        <value>contact.publisher-phone</value>
+      </list>
+    </property>
+
+    <property name="Core">
+      <list>
+        <value>checksum</value>
+        <value>checksum-algorithm</value>
+        <value>created</value>
+        <value>description</value>
+        <value>expiration</value>
+        <value>id</value>
+        <value>language</value>
+        <value>location</value>
+        <value>metadata</value>
+        <value>modified</value>
+        <value>resource.derived-download-url</value>
+        <value>resource.derived-uri</value>
+        <value>resource-download-url</value>
+        <value>resource-size</value>
+        <value>resource-uri</value>
+        <value>source-id</value>
+        <value>thumbnail</value>
+        <value>title</value>
+        <value>datatype</value>
+        <value>metacard.created</value>
+        <value>metacard.modified</value>
+        <value>metacard.owner</value>
+        <value>metacard-tags</value>
+      </list>
+    </property>
+
+    <property name="DateTime">
+      <list>
+        <value>datetime.start</value>
+        <value>datetime.name</value>
+        <value>datetime.end</value>
+      </list>
+    </property>
+
+    <property name="Location">
+      <list>
+        <value>location.altitude-meters</value>
+        <value>location.country-code</value>
+        <value>location.crs-code</value>
+        <value>location.crs-name</value>
+      </list>
+    </property>
+
+    <property name="Media">
+      <list>
+        <value>media.format</value>
+        <value>media.format-version</value>
+        <value>media.bit-rate</value>
+        <value>media.bits-per-sample</value>
+        <value>media.compression</value>
+        <value>media.encoding</value>
+        <value>media.frame-center</value>
+        <value>media.frame-rate</value>
+        <value>media.height-pixels</value>
+        <value>media.number-of-bands</value>
+        <value>media.scanning-mode</value>
+        <value>media.type</value>
+        <value>media.width-pixels</value>
+        <value>media.duration</value>
+      </list>
+    </property>
+
+    <property name="Security">
+      <list>
+        <value>security.access-groups</value>
+        <value>security.access-individuals</value>
+      </list>
+    </property>
+
+    <property name="Topic">
+      <list>
+        <value>topic.category</value>
+        <value>topic.keyword</value>
+        <value>topic.vocabulary</value>
+      </list>
+    </property>
+
+    <property name="Validation">
+      <list>
+        <value>validation-warnings</value>
+        <value>validation-errors</value>
+        <value>failed-validators-warnings</value>
+        <value>failed-validators-errors</value>
+      </list>
+    </property>
+
+
+    <property name="Version">
+      <list>
+        <value>version.action</value>
+        <value>version.edited-by</value>
+        <value>version.id</value>
+        <value>version.tags</value>
+        <value>version.types</value>
+        <value>version.type-binary</value>
+        <value>version.versioned-by</value>
+      </list>
+    </property>
+
+  </bean>
+
+  <service ref="registryPolicyPlugin" auto-export="interfaces"/>
+
 </blueprint>

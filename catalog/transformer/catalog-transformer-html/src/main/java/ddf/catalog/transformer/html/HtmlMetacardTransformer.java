@@ -35,5 +35,4 @@ public class HtmlMetacardTransformer extends HtmlMetacard implements MetacardTra
       return new BinaryContentImpl(new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)));
     }
   }
-
 }

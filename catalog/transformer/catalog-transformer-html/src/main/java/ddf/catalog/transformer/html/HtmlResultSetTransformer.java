@@ -27,10 +27,7 @@ public class HtmlResultSetTransformer extends HtmlMetacard implements QueryRespo
     }
 
     List<Metacard> metacards =
-        sourceResponse.getResults()
-            .stream()
-            .map(Result::getMetacard)
-            .collect(Collectors.toList());
+        sourceResponse.getResults().stream().map(Result::getMetacard).collect(Collectors.toList());
 
     List<HtmlMetacardModel> metacardModels = new ArrayList<>();
 
@@ -46,5 +43,4 @@ public class HtmlResultSetTransformer extends HtmlMetacard implements QueryRespo
       return new BinaryContentImpl(new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)));
     }
   }
-
 }

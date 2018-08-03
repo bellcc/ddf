@@ -56,25 +56,31 @@ public class HtmlMetacard {
   }
 
   private void registerHelpers() {
-    handlebars.registerHelper("isBasicValue", new IfHelper() {
-      public CharSequence apply(Object context, Options options) throws IOException {
-        return (context instanceof HtmlBasicValueModel) ? options.fn() : options.inverse();
-      }
-    });
+    handlebars.registerHelper(
+        "isBasicValue",
+        new IfHelper() {
+          public CharSequence apply(Object context, Options options) throws IOException {
+            return (context instanceof HtmlBasicValueModel) ? options.fn() : options.inverse();
+          }
+        });
 
-    handlebars.registerHelper("isEmptyValue", new IfHelper() {
-      @Override
-      public CharSequence apply(Object context, Options options) throws IOException {
-        return (context instanceof HtmlEmptyValueModel) ? options.fn() : options.inverse();
-      }
-    });
+    handlebars.registerHelper(
+        "isEmptyValue",
+        new IfHelper() {
+          @Override
+          public CharSequence apply(Object context, Options options) throws IOException {
+            return (context instanceof HtmlEmptyValueModel) ? options.fn() : options.inverse();
+          }
+        });
 
-    handlebars.registerHelper("isMediaValue", new IfHelper() {
-      @Override
-      public CharSequence apply(Object context, Options options) throws IOException {
-        return (context instanceof HtmlMediaModel) ? options.fn() : options.inverse();
-      }
-    });
+    handlebars.registerHelper(
+        "isMediaValue",
+        new IfHelper() {
+          @Override
+          public CharSequence apply(Object context, Options options) throws IOException {
+            return (context instanceof HtmlMediaModel) ? options.fn() : options.inverse();
+          }
+        });
   }
 
   public String buildHtml(List<HtmlMetacardModel> metacardModels) {

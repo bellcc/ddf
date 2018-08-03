@@ -38,7 +38,8 @@ public class HtmlCategoryModel {
 
   private void mapAttributes(Metacard metacard, List<String> attributeList) {
     for (String attrKey : attributeList) {
-      // TODO Figure out what the difference between getValue() is and getValues() and when to use which
+      // TODO Figure out what the difference between getValue() is and getValues() and when to use
+      // which
       // TODO Replace the key with a human readable attribute value
 
       Attribute attr = metacard.getAttribute(attrKey);

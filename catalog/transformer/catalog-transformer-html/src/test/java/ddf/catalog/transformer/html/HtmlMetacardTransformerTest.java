@@ -59,15 +59,15 @@ public class HtmlMetacardTransformerTest {
 
     List<HtmlCategoryModel> categories = new ArrayList<>();
     categories.add(new HtmlCategoryModel(metacard, "Associations", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard,"Contact", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard,"Core", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard,"DateTime", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard,"Location", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard,"Media", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard,"Security", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard,"Topic", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard,"Validation", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard,"Version", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Contact", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Core", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "DateTime", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Location", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Media", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Security", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Topic", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Validation", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Version", EMPTY_ATTRIBUTE_LIST));
 
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     metacardModelList.add(new HtmlMetacardModel(metacard, categories));
@@ -76,7 +76,7 @@ public class HtmlMetacardTransformerTest {
 
     Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
 
-    assertThat(doc.select(".metacard").size() ,is(metacardModelList.size()));
+    assertThat(doc.select(".metacard").size(), is(metacardModelList.size()));
     assertThat(doc.select(".metacard-category").size(), is(categories.size()));
   }
 
@@ -139,8 +139,6 @@ public class HtmlMetacardTransformerTest {
 
     Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
 
-    System.out.println(doc.html());
-
     assertThat(doc.select(".media-attribute").size(), is(1));
   }
 
@@ -149,5 +147,4 @@ public class HtmlMetacardTransformerTest {
     HtmlMetacardTransformer htmlTransformer = new HtmlMetacardTransformer();
     htmlTransformer.transform(null, new HashMap<>());
   }
-
 }
