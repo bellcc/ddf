@@ -17,6 +17,24 @@ import org.junit.Test;
 public class HtmlMetacardTransformerTest {
 
   private static final List<String> EMPTY_ATTRIBUTE_LIST = Collections.emptyList();
+  private static final List<CategoryModel> EMPTY_CATEGORY_LIST = Collections.emptyList();
+
+  @Test
+  public void testMetacardCreation() {
+    Metacard metacard = new MetacardImpl();
+
+    List<MetacardModel> metacardModelList = new ArrayList<>();
+    metacardModelList.add(new MetacardModel(metacard, EMPTY_CATEGORY_LIST));
+    metacardModelList.add(new MetacardModel(metacard, EMPTY_CATEGORY_LIST));
+
+    HtmlMetacardTransformer htmlTransformer = new HtmlMetacardTransformer();
+
+    Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
+
+    System.out.println(doc.html());
+
+    assertThat(doc.select(".metacard").size(), is(metacardModelList.size()));
+  }
 
   @Test
   public void testCategoryCreation() {
@@ -43,7 +61,7 @@ public class HtmlMetacardTransformerTest {
 
     System.out.println(doc.html());
 
-    assertThat(doc.select(".metacard").size() ,is(1));
+    assertThat(doc.select(".metacard").size() ,is(metacardModelList.size()));
     assertThat(doc.select(".metacard-panel").size(), is(categories.size()));
   }
 
