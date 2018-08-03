@@ -2,12 +2,16 @@ package ddf.catalog.transformer.html;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.ValueResolver;
 import com.github.jknack.handlebars.context.FieldValueResolver;
+import com.github.jknack.handlebars.context.MapValueResolver;
+import com.github.jknack.handlebars.helper.IfHelper;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.github.jknack.handlebars.io.TemplateLoader;
-import ddf.catalog.transformer.html.models.MetacardModel;
+import ddf.catalog.transformer.html.models.HtmlEmptyValueModel;
+import ddf.catalog.transformer.html.models.HtmlMetacardModel;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
@@ -38,9 +42,14 @@ public class HtmlMetacard {
 
     this.handlebars = new Handlebars(this.templateLoader);
 
-    this.resolvers = new ValueResolver[] {
-        FieldValueResolver.INSTANCE
-    };
+    this.resolvers = new ValueResolver[] {FieldValueResolver.INSTANCE, MapValueResolver.INSTANCE};
+
+    handlebars.registerHelper("isEmpty", new IfHelper() {
+      @Override
+      public CharSequence apply(Object context, Options options) throws IOException {
+        return (context instanceof HtmlEmptyValueModel) ? options.fn() : options.inverse();
+      }
+    });
 
     try {
       this.template = this.handlebars.compile(HTML_TEMPLATE);
@@ -49,7 +58,7 @@ public class HtmlMetacard {
     }
   }
 
-  public String buildHtml(List<MetacardModel> metacardModels) {
+  public String buildHtml(List<HtmlMetacardModel> metacardModels) {
 
     if (metacardModels == null) {
       return null;

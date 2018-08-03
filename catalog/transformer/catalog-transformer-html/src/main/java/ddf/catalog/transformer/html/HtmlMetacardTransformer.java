@@ -5,7 +5,7 @@ import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.BinaryContentImpl;
 import ddf.catalog.transform.CatalogTransformerException;
 import ddf.catalog.transform.MetacardTransformer;
-import ddf.catalog.transformer.html.models.MetacardModel;
+import ddf.catalog.transformer.html.models.HtmlMetacardModel;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -23,9 +23,9 @@ public class HtmlMetacardTransformer extends HtmlMetacard implements MetacardTra
       throw new CatalogTransformerException("Null metacard cannot be transformed to HTML");
     }
 
-    List<MetacardModel> metacardModelList = new ArrayList<>();
+    List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     // TODO Add in metacard categories
-    metacardModelList.add(new MetacardModel(metacard, new ArrayList<>()));
+    metacardModelList.add(new HtmlMetacardModel(metacard, new ArrayList<>()));
 
     String html = buildHtml(metacardModelList);
 

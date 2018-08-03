@@ -5,33 +5,43 @@ import static org.junit.Assert.assertThat;
 
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.MetacardImpl;
-import ddf.catalog.transformer.html.models.CategoryModel;
-import ddf.catalog.transformer.html.models.MetacardModel;
+import ddf.catalog.data.types.Associations;
+import ddf.catalog.transformer.html.models.HtmlCategoryModel;
+import ddf.catalog.transformer.html.models.HtmlMetacardModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HtmlMetacardTransformerTest {
 
   private static final List<String> EMPTY_ATTRIBUTE_LIST = Collections.emptyList();
-  private static final List<CategoryModel> EMPTY_CATEGORY_LIST = Collections.emptyList();
+  private static final List<HtmlCategoryModel> EMPTY_CATEGORY_LIST = Collections.emptyList();
+
+  private List<String> ASSOCIATIONS_LIST;
+
+  @Before
+  public void setup() {
+    ASSOCIATIONS_LIST = new ArrayList<>();
+    ASSOCIATIONS_LIST.add(Associations.RELATED);
+    ASSOCIATIONS_LIST.add(Associations.DERIVED);
+    ASSOCIATIONS_LIST.add(Associations.EXTERNAL);
+  }
 
   @Test
   public void testMetacardCreation() {
     Metacard metacard = new MetacardImpl();
 
-    List<MetacardModel> metacardModelList = new ArrayList<>();
-    metacardModelList.add(new MetacardModel(metacard, EMPTY_CATEGORY_LIST));
-    metacardModelList.add(new MetacardModel(metacard, EMPTY_CATEGORY_LIST));
+    List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
+    metacardModelList.add(new HtmlMetacardModel(metacard, EMPTY_CATEGORY_LIST));
+    metacardModelList.add(new HtmlMetacardModel(metacard, EMPTY_CATEGORY_LIST));
 
     HtmlMetacardTransformer htmlTransformer = new HtmlMetacardTransformer();
 
     Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
-
-    System.out.println(doc.html());
 
     assertThat(doc.select(".metacard").size(), is(metacardModelList.size()));
   }
@@ -40,29 +50,71 @@ public class HtmlMetacardTransformerTest {
   public void testCategoryCreation() {
     Metacard metacard = new MetacardImpl();
 
-    List<CategoryModel> categories = new ArrayList<>();
-    categories.add(new CategoryModel(metacard, "Associations", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new CategoryModel(metacard,"Contact", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new CategoryModel(metacard,"Core", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new CategoryModel(metacard,"DateTime", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new CategoryModel(metacard,"Location", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new CategoryModel(metacard,"Media", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new CategoryModel(metacard,"Security", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new CategoryModel(metacard,"Topic", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new CategoryModel(metacard,"Validation", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new CategoryModel(metacard,"Version", EMPTY_ATTRIBUTE_LIST));
+    List<HtmlCategoryModel> categories = new ArrayList<>();
+    categories.add(new HtmlCategoryModel(metacard, "Associations", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard,"Contact", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard,"Core", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard,"DateTime", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard,"Location", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard,"Media", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard,"Security", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard,"Topic", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard,"Validation", EMPTY_ATTRIBUTE_LIST));
+    categories.add(new HtmlCategoryModel(metacard,"Version", EMPTY_ATTRIBUTE_LIST));
+
+    List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
+    metacardModelList.add(new HtmlMetacardModel(metacard, categories));
 
     HtmlMetacardTransformer htmlTransformer = new HtmlMetacardTransformer();
 
-    List<MetacardModel> metacardModelList = new ArrayList<>();
-    metacardModelList.add(new MetacardModel(metacard, categories));
+    Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
+
+    assertThat(doc.select(".metacard").size() ,is(metacardModelList.size()));
+    assertThat(doc.select(".metacard-category").size(), is(categories.size()));
+  }
+
+  @Test
+  public void testAssociationsAttributes() {
+    MetacardImpl metacard = new MetacardImpl();
+    metacard.setAttribute(Associations.RELATED, "");
+    metacard.setAttribute(Associations.DERIVED, "");
+    metacard.setAttribute(Associations.EXTERNAL, "");
+
+    List<HtmlCategoryModel> categories = new ArrayList<>();
+    categories.add(new HtmlCategoryModel(metacard, "Associations", ASSOCIATIONS_LIST));
+
+    List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
+    metacardModelList.add(new HtmlMetacardModel(metacard, categories));
+
+    HtmlMetacardTransformer htmlTransformer = new HtmlMetacardTransformer();
 
     Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
 
-    System.out.println(doc.html());
+    assertThat(doc.select(".metacard").size(), is(metacardModelList.size()));
+    assertThat(doc.select(".metacard-category").size(), is(categories.size()));
+    assertThat(doc.select(".category-table").size(), is(categories.size()));
+    assertThat(doc.select(".metacard-attribute").size(), is(ASSOCIATIONS_LIST.size()));
+  }
 
-    assertThat(doc.select(".metacard").size() ,is(metacardModelList.size()));
-    assertThat(doc.select(".metacard-panel").size(), is(categories.size()));
+  @Test
+  public void testEmptyAttributeValue() {
+    MetacardImpl metacard = new MetacardImpl();
+    metacard.setAttribute(Associations.RELATED, null);
+    metacard.setAttribute(Associations.DERIVED, "");
+    metacard.setAttribute(Associations.EXTERNAL, "");
+
+    List<HtmlCategoryModel> categories = new ArrayList<>();
+    categories.add(new HtmlCategoryModel(metacard, "Associations", ASSOCIATIONS_LIST));
+
+    List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
+    metacardModelList.add(new HtmlMetacardModel(metacard, categories));
+
+    HtmlMetacardTransformer htmlTransformer = new HtmlMetacardTransformer();
+
+    Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
+
+    assertThat(doc.select(".metacard-attribute").size(), is(ASSOCIATIONS_LIST.size()));
+    assertThat(doc.select(".empty-attribute").size(), is(1));
   }
 
 }

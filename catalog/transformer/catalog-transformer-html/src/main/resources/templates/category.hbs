@@ -1,3 +1,20 @@
 <div class="metacard-category">
-  <h1>{{ title }}</h1>
+  <h3 class="category-title">{{ title }}</h3>
+  <table class="category-table">
+    <tr>
+      <th>Property</th>
+      <th>Value</th>
+    </tr>
+    {{#each attributes}}
+      <tr class="metacard-attribute">
+        <td class="attribute-name">{{ @key }}</td>
+
+        {{#isEmpty}}
+          <td class="attribute-value empty-attribute">{{ EMPTY_FIELD_VALUE }}</td>
+        {{else}}
+          <td class="attribute-value">{{ this }}</td>
+        {{/isEmpty}}
+      </tr>
+    {{/each}}
+  </table>
 </div>
