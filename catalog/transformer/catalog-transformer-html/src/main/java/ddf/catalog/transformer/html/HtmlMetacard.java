@@ -10,7 +10,9 @@ import com.github.jknack.handlebars.context.MapValueResolver;
 import com.github.jknack.handlebars.helper.IfHelper;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.github.jknack.handlebars.io.TemplateLoader;
+import ddf.catalog.transformer.html.models.HtmlBasicValueModel;
 import ddf.catalog.transformer.html.models.HtmlEmptyValueModel;
+import ddf.catalog.transformer.html.models.HtmlMediaModel;
 import ddf.catalog.transformer.html.models.HtmlMetacardModel;
 import java.io.IOException;
 import java.util.List;
@@ -44,18 +46,35 @@ public class HtmlMetacard {
 
     this.resolvers = new ValueResolver[] {FieldValueResolver.INSTANCE, MapValueResolver.INSTANCE};
 
-    handlebars.registerHelper("isEmpty", new IfHelper() {
-      @Override
-      public CharSequence apply(Object context, Options options) throws IOException {
-        return (context instanceof HtmlEmptyValueModel) ? options.fn() : options.inverse();
-      }
-    });
+    this.registerHelpers();
 
     try {
       this.template = this.handlebars.compile(HTML_TEMPLATE);
     } catch (IOException e) {
       LOGGER.error("Failed to compile handlebars template {}", HTML_TEMPLATE, e);
     }
+  }
+
+  private void registerHelpers() {
+    handlebars.registerHelper("isBasicValue", new IfHelper() {
+      public CharSequence apply(Object context, Options options) throws IOException {
+        return (context instanceof HtmlBasicValueModel) ? options.fn() : options.inverse();
+      }
+    });
+
+    handlebars.registerHelper("isEmptyValue", new IfHelper() {
+      @Override
+      public CharSequence apply(Object context, Options options) throws IOException {
+        return (context instanceof HtmlEmptyValueModel) ? options.fn() : options.inverse();
+      }
+    });
+
+    handlebars.registerHelper("isMediaValue", new IfHelper() {
+      @Override
+      public CharSequence apply(Object context, Options options) throws IOException {
+        return (context instanceof HtmlMediaModel) ? options.fn() : options.inverse();
+      }
+    });
   }
 
   public String buildHtml(List<HtmlMetacardModel> metacardModels) {

@@ -9,11 +9,20 @@
       <tr class="metacard-attribute">
         <td class="attribute-name">{{ @key }}</td>
 
-        {{#isEmpty}}
+        {{#isEmptyValue}}
           <td class="attribute-value empty-attribute">{{ EMPTY_FIELD_VALUE }}</td>
-        {{else}}
-          <td class="attribute-value">{{ this }}</td>
-        {{/isEmpty}}
+        {{/isEmptyValue}}
+
+        {{#isMediaValue}}
+          <td class="attribute-value media-attribute">
+            <img src="data:image/png;base64, {{ this.data }}"/>
+          </td>
+        {{/isMediaValue}}
+
+        {{#isBasicValue}}
+          <td class="attribute-value">{{ this.value }}</td>
+        {{/isBasicValue}}
+
       </tr>
     {{/each}}
   </table>

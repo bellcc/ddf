@@ -45,8 +45,11 @@ public class HtmlCategoryModel {
 
       if (attr == null) {
         this.attributes.put(attrKey, new HtmlEmptyValueModel());
+      } else if (attrKey == "thumbnail") {
+        byte[] imageData = (byte[]) attr.getValue();
+        this.attributes.put(attrKey, new HtmlMediaModel(imageData));
       } else {
-        this.attributes.put(attrKey, attr.getValue());
+        this.attributes.put(attrKey, new HtmlBasicValueModel(attr.getValue()));
       }
     }
   }
