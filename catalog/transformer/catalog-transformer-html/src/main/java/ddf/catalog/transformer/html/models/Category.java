@@ -13,7 +13,27 @@
  */
 package ddf.catalog.transformer.html.models;
 
-public class HtmlEmptyValueModel {
+import java.util.List;
 
-  private static final String EMPTY_FIELD_VALUE = "--";
+public class Category {
+
+  private String title;
+
+  private List<String> attributes;
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public void setAttributes(List<String> attributes) {
+    this.attributes = attributes;
+  }
+
+  public String getTitle() {
+    return this.title;
+  }
+
+  public List<String> getAttributes() {
+    return this.attributes;
+  }
 }

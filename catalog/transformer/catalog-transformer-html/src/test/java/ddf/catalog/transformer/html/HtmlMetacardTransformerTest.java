@@ -1,3 +1,16 @@
+/**
+ * Copyright (c) Codice Foundation
+ *
+ * <p>This is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software Foundation, either version 3 of
+ * the License, or any later version.
+ *
+ * <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details. A copy of the GNU Lesser General Public
+ * License is distributed along with this program and can be found at
+ * <http://www.gnu.org/licenses/lgpl.html>.
+ */
 package ddf.catalog.transformer.html;
 
 import static org.hamcrest.core.Is.is;
@@ -21,21 +34,28 @@ import org.junit.Test;
 
 public class HtmlMetacardTransformerTest {
 
+  private static final String METACARD_CLASS = ".metacard";
+  private static final String CATEGORY_CLASS = ".metacard-category";
+  private static final String CATEGORY_TABLE_CLASS = ".category-table";
+  private static final String METACARD_ATTRIBUTE_CLASS = ".metacard-attribute";
+  private static final String EMPTY_ATTRIBUTE_CLASS = ".empty-attribute";
+  private static final String MEDIA_ATTRIBUTE_CLASS = ".media-attribute";
+
   private static final List<String> EMPTY_ATTRIBUTE_LIST = Collections.emptyList();
   private static final List<HtmlCategoryModel> EMPTY_CATEGORY_LIST = Collections.emptyList();
 
-  private List<String> ASSOCIATIONS_LIST;
-  private List<String> CORE_LIST;
+  private List<String> associationsList;
+  private List<String> coreList;
 
   @Before
   public void setup() {
-    ASSOCIATIONS_LIST = new ArrayList<>();
-    ASSOCIATIONS_LIST.add(Associations.RELATED);
-    ASSOCIATIONS_LIST.add(Associations.DERIVED);
-    ASSOCIATIONS_LIST.add(Associations.EXTERNAL);
+    associationsList = new ArrayList<>();
+    associationsList.add(Associations.RELATED);
+    associationsList.add(Associations.DERIVED);
+    associationsList.add(Associations.EXTERNAL);
 
-    CORE_LIST = new ArrayList<>();
-    CORE_LIST.add(Core.THUMBNAIL);
+    coreList = new ArrayList<>();
+    coreList.add(Core.THUMBNAIL);
   }
 
   @Test
@@ -50,7 +70,7 @@ public class HtmlMetacardTransformerTest {
 
     Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
 
-    assertThat(doc.select(".metacard").size(), is(metacardModelList.size()));
+    assertThat(doc.select(METACARD_CLASS).size(), is(metacardModelList.size()));
   }
 
   @Test
@@ -76,8 +96,8 @@ public class HtmlMetacardTransformerTest {
 
     Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
 
-    assertThat(doc.select(".metacard").size(), is(metacardModelList.size()));
-    assertThat(doc.select(".metacard-category").size(), is(categories.size()));
+    assertThat(doc.select(METACARD_CLASS).size(), is(metacardModelList.size()));
+    assertThat(doc.select(CATEGORY_CLASS).size(), is(categories.size()));
   }
 
   @Test
@@ -88,7 +108,7 @@ public class HtmlMetacardTransformerTest {
     metacard.setAttribute(Associations.EXTERNAL, "");
 
     List<HtmlCategoryModel> categories = new ArrayList<>();
-    categories.add(new HtmlCategoryModel(metacard, "Associations", ASSOCIATIONS_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Associations", associationsList));
 
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     metacardModelList.add(new HtmlMetacardModel(metacard, categories));
@@ -97,10 +117,10 @@ public class HtmlMetacardTransformerTest {
 
     Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
 
-    assertThat(doc.select(".metacard").size(), is(metacardModelList.size()));
-    assertThat(doc.select(".metacard-category").size(), is(categories.size()));
-    assertThat(doc.select(".category-table").size(), is(categories.size()));
-    assertThat(doc.select(".metacard-attribute").size(), is(ASSOCIATIONS_LIST.size()));
+    assertThat(doc.select(METACARD_CLASS).size(), is(metacardModelList.size()));
+    assertThat(doc.select(CATEGORY_CLASS).size(), is(categories.size()));
+    assertThat(doc.select(CATEGORY_TABLE_CLASS).size(), is(categories.size()));
+    assertThat(doc.select(METACARD_ATTRIBUTE_CLASS).size(), is(associationsList.size()));
   }
 
   @Test
@@ -111,7 +131,7 @@ public class HtmlMetacardTransformerTest {
     metacard.setAttribute(Associations.EXTERNAL, "");
 
     List<HtmlCategoryModel> categories = new ArrayList<>();
-    categories.add(new HtmlCategoryModel(metacard, "Associations", ASSOCIATIONS_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Associations", associationsList));
 
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     metacardModelList.add(new HtmlMetacardModel(metacard, categories));
@@ -120,8 +140,8 @@ public class HtmlMetacardTransformerTest {
 
     Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
 
-    assertThat(doc.select(".metacard-attribute").size(), is(ASSOCIATIONS_LIST.size()));
-    assertThat(doc.select(".empty-attribute").size(), is(1));
+    assertThat(doc.select(METACARD_ATTRIBUTE_CLASS).size(), is(associationsList.size()));
+    assertThat(doc.select(EMPTY_ATTRIBUTE_CLASS).size(), is(1));
   }
 
   @Test
@@ -130,7 +150,7 @@ public class HtmlMetacardTransformerTest {
     metacard.setThumbnail(new byte[] {});
 
     List<HtmlCategoryModel> categories = new ArrayList<>();
-    categories.add(new HtmlCategoryModel(metacard, "Core", CORE_LIST));
+    categories.add(new HtmlCategoryModel(metacard, "Core", coreList));
 
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     metacardModelList.add(new HtmlMetacardModel(metacard, categories));
@@ -139,7 +159,7 @@ public class HtmlMetacardTransformerTest {
 
     Document doc = Jsoup.parse(htmlTransformer.buildHtml(metacardModelList));
 
-    assertThat(doc.select(".media-attribute").size(), is(1));
+    assertThat(doc.select(MEDIA_ATTRIBUTE_CLASS).size(), is(1));
   }
 
   @Test(expected = CatalogTransformerException.class)

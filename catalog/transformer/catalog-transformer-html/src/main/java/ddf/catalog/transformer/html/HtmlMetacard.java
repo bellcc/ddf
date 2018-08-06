@@ -1,3 +1,16 @@
+/**
+ * Copyright (c) Codice Foundation
+ *
+ * <p>This is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software Foundation, either version 3 of
+ * the License, or any later version.
+ *
+ * <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details. A copy of the GNU Lesser General Public
+ * License is distributed along with this program and can be found at
+ * <http://www.gnu.org/licenses/lgpl.html>.
+ */
 package ddf.catalog.transformer.html;
 
 import com.github.jknack.handlebars.Context;
@@ -93,7 +106,7 @@ public class HtmlMetacard {
       Context context = Context.newBuilder(metacardModels).resolver(resolvers).build();
       return template.apply(context);
     } catch (IOException e) {
-      LOGGER.error("Failed to apply context to {}.{}", HTML_TEMPLATE, TEMPLATE_SUFFIX, e);
+      LOGGER.error("Failed to apply context to {}{}", HTML_TEMPLATE, TEMPLATE_SUFFIX, e);
     }
 
     return null;
