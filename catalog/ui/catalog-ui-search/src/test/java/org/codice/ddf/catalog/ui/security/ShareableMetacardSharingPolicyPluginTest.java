@@ -64,13 +64,15 @@ public class ShareableMetacardSharingPolicyPluginTest {
         response.itemPolicy(),
         is(
             ImmutableMap.of(
+                QueryTemplateType.QUERY_TEMPLATE_TAG,
+                Collections.singleton(QueryTemplateType.QUERY_TEMPLATE_TAG),
+                WorkspaceConstants.WORKSPACE_TAG,
+                Collections.singleton(WorkspaceConstants.WORKSPACE_TAG),
+                ShareableMetacardImpl.SHARING_CAPABLE_TAG,
+                Collections.singleton(ShareableMetacardImpl.SHARING_CAPABLE_TAG),
                 Core.METACARD_OWNER,
                 ImmutableSet.of(EMAIL),
                 AttributeGroupType.ATTRIBUTE_GROUP_TAG,
-                Collections.singleton(AttributeGroupType.ATTRIBUTE_GROUP_TAG),
-                WorkspaceConstants.WORKSPACE_TAG,
-                Collections.singleton(WorkspaceConstants.WORKSPACE_TAG),
-                QueryTemplateType.QUERY_TEMPLATE_TAG,
-                Collections.singleton(QueryTemplateType.QUERY_TEMPLATE_TAG))));
+                Collections.singleton(AttributeGroupType.ATTRIBUTE_GROUP_TAG))));
   }
 }
