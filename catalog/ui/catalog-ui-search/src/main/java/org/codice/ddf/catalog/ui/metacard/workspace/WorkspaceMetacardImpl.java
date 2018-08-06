@@ -19,7 +19,6 @@ import ddf.catalog.data.MetacardType;
 import ddf.catalog.data.types.Associations;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.codice.ddf.catalog.ui.sharing.ShareableMetacardImpl;

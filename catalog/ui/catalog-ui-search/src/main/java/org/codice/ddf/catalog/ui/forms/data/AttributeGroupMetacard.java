@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableSet;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.types.Core;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.codice.ddf.catalog.ui.sharing.ShareableMetacardImpl;
