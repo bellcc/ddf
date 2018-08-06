@@ -42,6 +42,8 @@ import java.util.stream.Collectors;
  */
 public class ShareableMetacardImpl extends MetacardImpl {
 
+  public static final String SHARING_CAPABLE_TAG = "sharing-capable";
+
   public static final String QUERY_TEMPLATE_TAG = "query-template";
 
   public static final String ATTRIBUTE_GROUP_TAG = "attribute-group";
@@ -205,6 +207,7 @@ public class ShareableMetacardImpl extends MetacardImpl {
     return metacard != null
         && (metacard.getTags().contains(QUERY_TEMPLATE_TAG)
             || metacard.getTags().contains(WORKSPACE_TAG)
-            || metacard.getTags().contains(ATTRIBUTE_GROUP_TAG));
+            || metacard.getTags().contains(ATTRIBUTE_GROUP_TAG)
+            || metacard.getTags().contains(SHARING_CAPABLE_TAG));
   }
 }

@@ -18,14 +18,22 @@ import java.util.Set;
 import org.codice.ddf.catalog.ui.forms.data.AttributeGroupType;
 import org.codice.ddf.catalog.ui.forms.data.QueryTemplateType;
 import org.codice.ddf.catalog.ui.metacard.workspace.WorkspaceConstants;
+import org.codice.ddf.catalog.ui.sharing.ShareableMetacardImpl;
 
+/*
+ * Previous tags will be left in the Shareable Tags set to ensure backwards compatability.
+ * As we start to migrate from explicitly specifying which tags can be shared, we could
+ * incorpoarte a post-query plugin to do the data transformation to add on a generic
+ * sharing tag if it's missing, but still sharing capable.
+ */
 public class Constants {
 
   public static final Set<String> SHAREABLE_TAGS =
       ImmutableSet.of(
           AttributeGroupType.ATTRIBUTE_GROUP_TAG,
           WorkspaceConstants.WORKSPACE_TAG,
-          QueryTemplateType.QUERY_TEMPLATE_TAG);
+          QueryTemplateType.QUERY_TEMPLATE_TAG,
+          ShareableMetacardImpl.SHARING_CAPABLE_TAG);
 
   public static final String SYSTEM_TEMPLATE = "system-template";
 
