@@ -16,6 +16,7 @@ package org.codice.ddf.catalog.ui.forms.data;
 import static org.codice.ddf.catalog.ui.forms.data.AttributeGroupType.ATTRIBUTE_GROUP_LIST;
 import static org.codice.ddf.catalog.ui.forms.data.AttributeGroupType.ATTRIBUTE_GROUP_TAG;
 
+import com.google.common.collect.ImmutableSet;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.types.Core;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class AttributeGroupMetacard extends ShareableMetacardImpl {
     super(new AttributeGroupType());
     setAttribute(Core.TITLE, title);
     setAttribute(Core.DESCRIPTION, description);
-    setTags(Collections.singleton(ATTRIBUTE_GROUP_TAG));
+    setTags(ImmutableSet.of(ATTRIBUTE_GROUP_TAG, SHARING_CAPABLE_TAG));
   }
 
   public AttributeGroupMetacard(String title, String description, String id) {

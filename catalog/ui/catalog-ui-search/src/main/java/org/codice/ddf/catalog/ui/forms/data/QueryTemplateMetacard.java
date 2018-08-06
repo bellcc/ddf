@@ -22,6 +22,7 @@ import static org.codice.ddf.catalog.ui.metacard.workspace.QueryMetacardTypeImpl
 import static org.codice.ddf.catalog.ui.util.AccessUtil.safeGet;
 import static org.codice.ddf.catalog.ui.util.AccessUtil.safeGetList;
 
+import com.google.common.collect.ImmutableSet;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.AttributeImpl;
 import ddf.catalog.data.types.Core;
@@ -57,7 +58,7 @@ public class QueryTemplateMetacard extends ShareableMetacardImpl {
     super(new QueryTemplateType());
     setAttribute(Core.TITLE, title);
     setAttribute(Core.DESCRIPTION, description);
-    setTags(Collections.singleton(QUERY_TEMPLATE_TAG));
+    setTags(ImmutableSet.of(QUERY_TEMPLATE_TAG, SHARING_CAPABLE_TAG));
   }
 
   public QueryTemplateMetacard(String title, String description, String id) {
