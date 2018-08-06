@@ -27,4 +27,48 @@
     </service-properties>
   </service>
 
+  <bean id="associationAttributes" class="ddf.catalog.transformer.html.models.Category">
+    <property name="title" value="Association" />
+    <property name="attributes">
+      <list value-type="java.lang.String">
+        <value>metacard.associations.related</value>
+        <value>metacard.associations.derived</value>
+        <value>associations.external</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="contactAttributes" class="ddf.catalog.transformer.html.models.Category">
+    <property name="title" value="Contact" />
+    <property name="attributes">
+      <list value-type="java.lang.String">
+        <value>contact.contributor-address</value>
+        <value>contact.contributor-email</value>
+        <value>contact.contributor-name</value>
+        <value>contact.contributor-phone</value>
+        <value>contact.creator-address</value>
+        <value>contact.creator-email</value>
+        <value>contact.creator-name</value>
+        <value>contact.creator-phone</value>
+        <value>contact.point-of-contact-address</value>
+        <value>contact.point-of-contact-email</value>
+        <value>contact.point-of-contact-name</value>
+        <value>contact.point-of-contact-phone</value>
+        <value>contact.publisher-address</value>
+        <value>contact.publisher-email</value>
+        <value>contact.publisher-name</value>
+        <value>contact.publisher-phone</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="categoryList" class="ddf.catalog.transformer.html.HtmlMetacardTransformer">
+    <property name="categoryList">
+      <list>
+        <ref component-id="associationAttributes" />
+        <ref component-id="contactAttributes" />
+      </list>
+    </property>
+  </bean>
+
 </blueprint>
