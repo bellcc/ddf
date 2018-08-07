@@ -44,7 +44,19 @@ public class HtmlMetacardTransformerTest {
   private static final List<String> EMPTY_ATTRIBUTE_LIST = Collections.emptyList();
   private static final List<HtmlCategoryModel> EMPTY_CATEGORY_LIST = Collections.emptyList();
 
-  String[] allCategoryTitles = new String[] {"Associations", "Contact", "Core", "DateTime", "Location", "Media", "Security", "Topic", "Validation", "Version"};
+  private static final String[] ALL_CATEGORY_TITLES =
+      new String[] {
+        "Associations",
+        "Contact",
+        "Core",
+        "DateTime",
+        "Location",
+        "Media",
+        "Security",
+        "Topic",
+        "Validation",
+        "Version"
+      };
 
   private List<String> associationsList;
   private List<String> coreList;
@@ -79,7 +91,7 @@ public class HtmlMetacardTransformerTest {
   public void testCategoryCreation() {
     Metacard metacard = new MetacardImpl();
 
-    List<HtmlCategoryModel> categories = getAllEmptyCategories(allCategoryTitles);
+    List<HtmlCategoryModel> categories = getAllEmptyCategories(ALL_CATEGORY_TITLES);
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     metacardModelList.add(new HtmlMetacardModel(metacard, categories));
 
@@ -169,7 +181,8 @@ public class HtmlMetacardTransformerTest {
     return categories;
   }
 
-  private HtmlCategoryModel getHtmlCategoryModel(Metacard metacard, String title, List<String> attributeList) {
+  private HtmlCategoryModel getHtmlCategoryModel(
+      Metacard metacard, String title, List<String> attributeList) {
     HtmlCategoryModel category = new HtmlCategoryModel(title, attributeList);
     category.applyAttributeMappings(metacard);
 

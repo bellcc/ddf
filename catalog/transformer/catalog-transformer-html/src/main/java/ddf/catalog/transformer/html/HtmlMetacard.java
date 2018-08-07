@@ -24,6 +24,7 @@ import com.github.jknack.handlebars.helper.IfHelper;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.github.jknack.handlebars.io.TemplateLoader;
 import ddf.catalog.transformer.html.models.HtmlBasicValueModel;
+import ddf.catalog.transformer.html.models.HtmlCategoryModel;
 import ddf.catalog.transformer.html.models.HtmlEmptyValueModel;
 import ddf.catalog.transformer.html.models.HtmlMediaModel;
 import ddf.catalog.transformer.html.models.HtmlMetacardModel;
@@ -50,6 +51,8 @@ public class HtmlMetacard {
 
   private static final String HTML_TEMPLATE = "template";
 
+  private List<HtmlCategoryModel> categoryList;
+
   public HtmlMetacard() {
     this.templateLoader = new ClassPathTemplateLoader();
     this.templateLoader.setPrefix(TEMPLATE_DIRECTORY);
@@ -66,6 +69,12 @@ public class HtmlMetacard {
     } catch (IOException e) {
       LOGGER.error("Failed to compile handlebars template {}", HTML_TEMPLATE, e);
     }
+  }
+
+  public HtmlMetacard(List<HtmlCategoryModel> categoryList) {
+    this();
+
+    this.categoryList = categoryList;
   }
 
   private void registerHelpers() {
@@ -110,5 +119,13 @@ public class HtmlMetacard {
     }
 
     return null;
+  }
+
+  public void setCategoryList(List<HtmlCategoryModel> categoryList) {
+    this.categoryList = categoryList;
+  }
+
+  public List<HtmlCategoryModel> getCategoryList() {
+    return this.categoryList;
   }
 }

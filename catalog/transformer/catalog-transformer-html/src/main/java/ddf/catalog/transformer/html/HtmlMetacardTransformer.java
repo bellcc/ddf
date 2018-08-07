@@ -18,7 +18,7 @@ import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.BinaryContentImpl;
 import ddf.catalog.transform.CatalogTransformerException;
 import ddf.catalog.transform.MetacardTransformer;
-import ddf.catalog.transformer.html.models.Category;
+import ddf.catalog.transformer.html.models.HtmlCategoryModel;
 import ddf.catalog.transformer.html.models.HtmlMetacardModel;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
@@ -29,6 +29,13 @@ import java.util.Map;
 
 public class HtmlMetacardTransformer extends HtmlMetacard implements MetacardTransformer {
 
+  public HtmlMetacardTransformer() {
+    super();
+  }
+
+  public HtmlMetacardTransformer(List<HtmlCategoryModel> categoryList) {
+    super(categoryList);
+  }
 
   @Override
   public BinaryContent transform(Metacard metacard, Map<String, Serializable> map)
@@ -40,7 +47,7 @@ public class HtmlMetacardTransformer extends HtmlMetacard implements MetacardTra
 
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     // TODO Add in metacard categories
-    metacardModelList.add(new HtmlMetacardModel(metacard, new ArrayList<>()));
+    metacardModelList.add(new HtmlMetacardModel(metacard, getCategoryList()));
 
     String html = buildHtml(metacardModelList);
 
@@ -50,6 +57,4 @@ public class HtmlMetacardTransformer extends HtmlMetacard implements MetacardTra
       return new BinaryContentImpl(new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)));
     }
   }
-
-
 }

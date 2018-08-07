@@ -31,6 +31,8 @@ public class HtmlMetacardModel {
   public HtmlMetacardModel(Metacard metacard, List<HtmlCategoryModel> categories) {
     this.metacard = metacard;
     this.categories = categories;
+
+    this.applyMetacard();
   }
 
   public void setMetacard(Metacard metacard) {
