@@ -15,7 +15,6 @@ package ddf.catalog.transformer.html.models;
 
 import ddf.catalog.data.Attribute;
 import ddf.catalog.data.Metacard;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
