@@ -45,13 +45,11 @@ import org.codice.ddf.catalog.ui.sharing.ShareableMetacardImpl;
  */
 public class AttributeGroupMetacard extends ShareableMetacardImpl {
 
-  public static final String FAKE = "sharing-capable";
-
   public AttributeGroupMetacard(String title, String description) {
     super(new AttributeGroupType());
     setAttribute(Core.TITLE, title);
     setAttribute(Core.DESCRIPTION, description);
-    setTags(ImmutableSet.of(FAKE, SHARING_CAPABLE_TAG));
+    setTags(ImmutableSet.of(ShareableMetacardImpl.SHARING_CAPABLE_TAG, SHARING_CAPABLE_TAG));
   }
 
   public AttributeGroupMetacard(String title, String description, String id) {
