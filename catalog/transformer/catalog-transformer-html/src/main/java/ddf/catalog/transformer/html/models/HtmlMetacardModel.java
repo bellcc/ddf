@@ -14,17 +14,31 @@
 package ddf.catalog.transformer.html.models;
 
 import ddf.catalog.data.Metacard;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HtmlMetacardModel {
 
+  private Metacard metacard;
+
   private List<HtmlCategoryModel> categories;
 
-  private Metacard metacard;
+  public HtmlMetacardModel(Metacard metacard) {
+    this.metacard = metacard;
+    this.categories = new ArrayList<>();
+  }
 
   public HtmlMetacardModel(Metacard metacard, List<HtmlCategoryModel> categories) {
     this.metacard = metacard;
     this.categories = categories;
+  }
+
+  public void setMetacard(Metacard metacard) {
+    this.metacard = metacard;
+  }
+
+  public Metacard getMetacard() {
+    return this.metacard;
   }
 
   public void setCategories(List<HtmlCategoryModel> categories) {
@@ -36,15 +50,12 @@ public class HtmlMetacardModel {
   }
 
   public void addCategory(HtmlCategoryModel category) {
-    if (contains(category.getTitle())) {
-      // TODO Log that duplicate category entries are not allowed
-      return;
-    }
-
     this.categories.add(category);
   }
 
-  public boolean contains(String title) {
-    return false;
+  public void applyMetacard() {
+    for (HtmlCategoryModel category : categories) {
+      category.applyAttributeMappings(metacard);
+    }
   }
 }

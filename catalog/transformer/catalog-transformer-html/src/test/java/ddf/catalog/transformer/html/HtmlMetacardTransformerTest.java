@@ -44,6 +44,8 @@ public class HtmlMetacardTransformerTest {
   private static final List<String> EMPTY_ATTRIBUTE_LIST = Collections.emptyList();
   private static final List<HtmlCategoryModel> EMPTY_CATEGORY_LIST = Collections.emptyList();
 
+  String[] allCategoryTitles = new String[] {"Associations", "Contact", "Core", "DateTime", "Location", "Media", "Security", "Topic", "Validation", "Version"};
+
   private List<String> associationsList;
   private List<String> coreList;
 
@@ -77,18 +79,7 @@ public class HtmlMetacardTransformerTest {
   public void testCategoryCreation() {
     Metacard metacard = new MetacardImpl();
 
-    List<HtmlCategoryModel> categories = new ArrayList<>();
-    categories.add(new HtmlCategoryModel(metacard, "Associations", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard, "Contact", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard, "Core", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard, "DateTime", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard, "Location", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard, "Media", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard, "Security", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard, "Topic", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard, "Validation", EMPTY_ATTRIBUTE_LIST));
-    categories.add(new HtmlCategoryModel(metacard, "Version", EMPTY_ATTRIBUTE_LIST));
-
+    List<HtmlCategoryModel> categories = getAllEmptyCategories(allCategoryTitles);
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     metacardModelList.add(new HtmlMetacardModel(metacard, categories));
 
@@ -108,7 +99,7 @@ public class HtmlMetacardTransformerTest {
     metacard.setAttribute(Associations.EXTERNAL, "");
 
     List<HtmlCategoryModel> categories = new ArrayList<>();
-    categories.add(new HtmlCategoryModel(metacard, "Associations", associationsList));
+    categories.add(getHtmlCategoryModel(metacard, "Associations", associationsList));
 
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     metacardModelList.add(new HtmlMetacardModel(metacard, categories));
@@ -131,7 +122,7 @@ public class HtmlMetacardTransformerTest {
     metacard.setAttribute(Associations.EXTERNAL, "");
 
     List<HtmlCategoryModel> categories = new ArrayList<>();
-    categories.add(new HtmlCategoryModel(metacard, "Associations", associationsList));
+    categories.add(getHtmlCategoryModel(metacard, "Associations", associationsList));
 
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     metacardModelList.add(new HtmlMetacardModel(metacard, categories));
@@ -150,7 +141,7 @@ public class HtmlMetacardTransformerTest {
     metacard.setThumbnail(new byte[] {});
 
     List<HtmlCategoryModel> categories = new ArrayList<>();
-    categories.add(new HtmlCategoryModel(metacard, "Core", coreList));
+    categories.add(getHtmlCategoryModel(metacard, "Core", coreList));
 
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     metacardModelList.add(new HtmlMetacardModel(metacard, categories));
@@ -166,5 +157,22 @@ public class HtmlMetacardTransformerTest {
   public void testNullMetacardTransform() throws CatalogTransformerException {
     HtmlMetacardTransformer htmlTransformer = new HtmlMetacardTransformer();
     htmlTransformer.transform(null, new HashMap<>());
+  }
+
+  private List<HtmlCategoryModel> getAllEmptyCategories(String[] categoryTitles) {
+    List<HtmlCategoryModel> categories = new ArrayList<>();
+
+    for (String title : categoryTitles) {
+      categories.add(new HtmlCategoryModel(title, EMPTY_ATTRIBUTE_LIST));
+    }
+
+    return categories;
+  }
+
+  private HtmlCategoryModel getHtmlCategoryModel(Metacard metacard, String title, List<String> attributeList) {
+    HtmlCategoryModel category = new HtmlCategoryModel(title, attributeList);
+    category.applyAttributeMappings(metacard);
+
+    return category;
   }
 }

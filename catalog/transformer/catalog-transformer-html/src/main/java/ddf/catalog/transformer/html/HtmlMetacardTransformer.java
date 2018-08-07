@@ -19,6 +19,7 @@ import ddf.catalog.data.impl.BinaryContentImpl;
 import ddf.catalog.transform.CatalogTransformerException;
 import ddf.catalog.transform.MetacardTransformer;
 import ddf.catalog.transformer.html.models.Category;
+import ddf.catalog.transformer.html.models.HtmlMetacardModel;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +29,6 @@ import java.util.Map;
 
 public class HtmlMetacardTransformer extends HtmlMetacard implements MetacardTransformer {
 
-  private List<Category> categoryList = new ArrayList<>();
 
   @Override
   public BinaryContent transform(Metacard metacard, Map<String, Serializable> map)
@@ -38,12 +38,11 @@ public class HtmlMetacardTransformer extends HtmlMetacard implements MetacardTra
       throw new CatalogTransformerException("Null metacard cannot be transformed to HTML");
     }
 
-    // List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
+    List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
     // TODO Add in metacard categories
-    // metacardModelList.add(new HtmlMetacardModel(metacard, new ArrayList<>()));
+    metacardModelList.add(new HtmlMetacardModel(metacard, new ArrayList<>()));
 
-    // String html = buildHtml(metacardModelList);
-    String html = "<html><head></head><body><h1>Hello World</h1></body></html>";
+    String html = buildHtml(metacardModelList);
 
     if (html == null) {
       throw new CatalogTransformerException("Metacard cannot be transformed to HTML");
@@ -52,11 +51,5 @@ public class HtmlMetacardTransformer extends HtmlMetacard implements MetacardTra
     }
   }
 
-  public void setCategoryList(List<Category> categoryList) {
-    this.categoryList = categoryList;
-  }
 
-  public List<Category> getCategoryList() {
-    return this.categoryList;
-  }
 }

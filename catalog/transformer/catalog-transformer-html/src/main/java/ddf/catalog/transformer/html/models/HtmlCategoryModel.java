@@ -22,34 +22,44 @@ import java.util.TreeMap;
 public class HtmlCategoryModel {
 
   private String title;
-  private Map<String, Object> attributes;
 
-  public HtmlCategoryModel(Metacard metacard, String title, List<String> attributeList) {
+  private List<String> attributeList;
+
+  private Map<String, Object> attributeMappings;
+
+  public HtmlCategoryModel(String title, List<String> attributeList) {
     this.title = title;
-
-    // A tree map will alphabetize the attribute names
-    this.attributes = new TreeMap<>();
-
-    mapAttributes(metacard, attributeList);
+    this.attributeList = attributeList;
+    this.attributeMappings = new TreeMap<>();
   }
 
   public void setTitle(String title) {
     this.title = title;
   }
 
-  public void setAttributes(Map<String, Object> attributes) {
-    this.attributes = attributes;
-  }
-
   public String getTitle() {
     return this.title;
   }
 
-  public Map<String, Object> getAttributes() {
-    return this.attributes;
+  public void setAttributeList(List<String> attributeList) {
+    this.attributeList = attributeList;
   }
 
-  private void mapAttributes(Metacard metacard, List<String> attributeList) {
+  public List<String> getAttributeList() {
+    return this.attributeList;
+  }
+
+  public void setAttributes(Map<String, Object> attributes) {
+    this.attributeMappings = attributes;
+  }
+
+  public Map<String, Object> getAttributes() {
+    return this.attributeMappings;
+  }
+
+  public void applyAttributeMappings(Metacard metacard) {
+    this.attributeMappings = new TreeMap<>();
+
     for (String attrKey : attributeList) {
       // TODO Figure out what the difference between getValue() is and getValues()
       // TODO Replace the key with a human readable attribute value
@@ -57,12 +67,12 @@ public class HtmlCategoryModel {
       Attribute attr = metacard.getAttribute(attrKey);
 
       if (attr == null) {
-        this.attributes.put(attrKey, new HtmlEmptyValueModel());
+        this.attributeMappings.put(attrKey, new HtmlEmptyValueModel());
       } else if (attrKey.equals("thumbnail")) {
         byte[] imageData = (byte[]) attr.getValue();
-        this.attributes.put(attrKey, new HtmlMediaModel(imageData));
+        this.attributeMappings.put(attrKey, new HtmlMediaModel(imageData));
       } else {
-        this.attributes.put(attrKey, new HtmlBasicValueModel(attr.getValue()));
+        this.attributeMappings.put(attrKey, new HtmlBasicValueModel(attr.getValue()));
       }
     }
   }
