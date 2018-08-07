@@ -53,11 +53,13 @@ import org.codice.ddf.catalog.ui.sharing.ShareableMetacardImpl;
  * in a future version of the library.</i>
  */
 public class QueryTemplateMetacard extends ShareableMetacardImpl {
+  public static final String FAKE = "sharing-capable";
+
   public QueryTemplateMetacard(String title, String description) {
     super(new QueryTemplateType());
     setAttribute(Core.TITLE, title);
     setAttribute(Core.DESCRIPTION, description);
-    setTags(ImmutableSet.of(QUERY_TEMPLATE_TAG, SHARING_CAPABLE_TAG));
+    setTags(ImmutableSet.of(FAKE, SHARING_CAPABLE_TAG));
   }
 
   public QueryTemplateMetacard(String title, String description, String id) {
