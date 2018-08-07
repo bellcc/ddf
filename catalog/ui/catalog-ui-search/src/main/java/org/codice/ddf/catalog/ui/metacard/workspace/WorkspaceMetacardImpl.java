@@ -13,12 +13,12 @@
  */
 package org.codice.ddf.catalog.ui.metacard.workspace;
 
-import com.google.common.collect.ImmutableSet;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.MetacardType;
 import ddf.catalog.data.types.Associations;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.codice.ddf.catalog.ui.sharing.ShareableMetacardImpl;
@@ -29,7 +29,7 @@ public class WorkspaceMetacardImpl extends ShareableMetacardImpl {
 
   public WorkspaceMetacardImpl() {
     super(TYPE);
-    setTags(ImmutableSet.of(WorkspaceConstants.WORKSPACE_TAG, SHARING_CAPABLE_TAG));
+    setTags(Collections.singleton(WorkspaceConstants.WORKSPACE_TAG));
   }
 
   public WorkspaceMetacardImpl(String id) {

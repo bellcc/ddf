@@ -78,7 +78,6 @@ public class ShareableMetacardImpl extends MetacardImpl {
    */
   public static boolean canShare(Metacard metacard) {
     return metacard != null
-        && isSharingCapable(metacard)
         && metacard
             .getMetacardType()
             .getAttributeDescriptors()
@@ -90,7 +89,13 @@ public class ShareableMetacardImpl extends MetacardImpl {
             .getAttributeDescriptors()
             .stream()
             .map(AttributeDescriptor::getName)
-            .anyMatch(attr -> Objects.equals(SecurityAttributes.ACCESS_INDIVIDUALS, attr));
+            .anyMatch(attr -> Objects.equals(SecurityAttributes.ACCESS_INDIVIDUALS, attr))
+        && metacard
+            .getMetacardType()
+            .getAttributeDescriptors()
+            .stream()
+            .map(AttributeDescriptor::getName)
+            .anyMatch(attr -> Objects.equals(CoreAttributes.METACARD_OWNER, attr));
   }
 
   /**
@@ -201,13 +206,5 @@ public class ShareableMetacardImpl extends MetacardImpl {
   public ShareableMetacardImpl setAccessGroups(Set<String> accessGroups) {
     setAttribute(SecurityAttributes.ACCESS_GROUPS, new ArrayList<>(accessGroups));
     return this;
-  }
-
-  private static boolean isSharingCapable(Metacard metacard) {
-    return metacard != null
-        && (metacard.getTags().contains(QUERY_TEMPLATE_TAG)
-            || metacard.getTags().contains(WORKSPACE_TAG)
-            || metacard.getTags().contains(ATTRIBUTE_GROUP_TAG)
-            || metacard.getTags().contains(SHARING_CAPABLE_TAG));
   }
 }

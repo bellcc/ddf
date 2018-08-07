@@ -14,7 +14,6 @@
 package org.codice.ddf.catalog.ui.forms.data;
 
 import static org.codice.ddf.catalog.ui.forms.data.QueryTemplateType.QUERY_TEMPLATE_FILTER;
-import static org.codice.ddf.catalog.ui.forms.data.QueryTemplateType.QUERY_TEMPLATE_TAG;
 import static org.codice.ddf.catalog.ui.metacard.workspace.QueryMetacardTypeImpl.DETAIL_LEVEL;
 import static org.codice.ddf.catalog.ui.metacard.workspace.QueryMetacardTypeImpl.QUERY_FEDERATION;
 import static org.codice.ddf.catalog.ui.metacard.workspace.QueryMetacardTypeImpl.QUERY_SORTS;
@@ -22,11 +21,11 @@ import static org.codice.ddf.catalog.ui.metacard.workspace.QueryMetacardTypeImpl
 import static org.codice.ddf.catalog.ui.util.AccessUtil.safeGet;
 import static org.codice.ddf.catalog.ui.util.AccessUtil.safeGetList;
 
-import com.google.common.collect.ImmutableSet;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.AttributeImpl;
 import ddf.catalog.data.types.Core;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,7 @@ public class QueryTemplateMetacard extends ShareableMetacardImpl {
     super(new QueryTemplateType());
     setAttribute(Core.TITLE, title);
     setAttribute(Core.DESCRIPTION, description);
-    setTags(ImmutableSet.of(ShareableMetacardImpl.SHARING_CAPABLE_TAG, SHARING_CAPABLE_TAG));
+    setTags(Collections.singleton(QUERY_TEMPLATE_TAG));
   }
 
   public QueryTemplateMetacard(String title, String description, String id) {
