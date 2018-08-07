@@ -30,13 +30,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class HtmlResultSetTransformer extends HtmlMetacard implements QueryResponseTransformer {
+public class HtmlQueryResponseTransformer extends HtmlMetacard implements QueryResponseTransformer {
 
-  public HtmlResultSetTransformer() {
+  public HtmlQueryResponseTransformer() {
     super();
   }
 
-  public HtmlResultSetTransformer(List<HtmlCategoryModel> categoryList) {
+  public HtmlQueryResponseTransformer(List<HtmlCategoryModel> categoryList) {
     super(categoryList);
   }
 

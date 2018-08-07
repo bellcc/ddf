@@ -41,6 +41,33 @@
     </service-properties>
   </service>
 
+  <bean id="HtmlQueryResponseTransformer"
+    class="ddf.catalog.transformer.html.HtmlQueryResponseTransformer">
+    <argument>
+      <list>
+        <ref component-id="associationAttributes" />
+        <ref component-id="contactAttributes" />
+        <ref component-id="coreAttributes" />
+        <ref component-id="dateTimeAttributes" />
+        <ref component-id="locationAttributes" />
+        <ref component-id="mediaAttributes" />
+        <ref component-id="securityAttributes" />
+        <ref component-id="topicAttributes" />
+        <ref component-id="validationAttributes" />
+        <ref component-id="versionAttributes" />
+      </list>
+    </argument>
+  </bean>
+
+  <service ref="HtmlQueryResponseTransformer"
+    interface="ddf.catalog.transform.QueryResponseTransformer">
+    <service-properties>
+      <entry key="id" value="html"/>
+      <entry key="shortname" value="html"/>
+      <entry key="mime-type" value="text/html"/>
+    </service-properties>
+  </service>
+
   <bean id="associationAttributes" class="ddf.catalog.transformer.html.models.HtmlCategoryModel">
     <argument value="Assocation" />
     <argument>
