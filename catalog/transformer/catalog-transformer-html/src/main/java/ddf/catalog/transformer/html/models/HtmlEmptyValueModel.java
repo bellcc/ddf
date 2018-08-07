@@ -14,6 +14,5 @@
 package ddf.catalog.transformer.html.models;
 
 public class HtmlEmptyValueModel {
-
-  private static final String EMPTY_FIELD_VALUE = "--";
+  private final String emptyFieldValue = "--";
 }

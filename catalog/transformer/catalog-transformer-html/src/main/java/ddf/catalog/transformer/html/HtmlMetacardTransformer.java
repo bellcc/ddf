@@ -46,7 +46,6 @@ public class HtmlMetacardTransformer extends HtmlMetacard implements MetacardTra
     }
 
     List<HtmlMetacardModel> metacardModelList = new ArrayList<>();
-    // TODO Add in metacard categories
     metacardModelList.add(new HtmlMetacardModel(metacard, getCategoryList()));
 
     String html = buildHtml(metacardModelList);

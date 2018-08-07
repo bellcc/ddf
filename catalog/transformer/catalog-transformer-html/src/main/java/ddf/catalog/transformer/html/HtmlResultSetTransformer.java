@@ -20,6 +20,7 @@ import ddf.catalog.data.impl.BinaryContentImpl;
 import ddf.catalog.operation.SourceResponse;
 import ddf.catalog.transform.CatalogTransformerException;
 import ddf.catalog.transform.QueryResponseTransformer;
+import ddf.catalog.transformer.html.models.HtmlCategoryModel;
 import ddf.catalog.transformer.html.models.HtmlMetacardModel;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
@@ -30,6 +31,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HtmlResultSetTransformer extends HtmlMetacard implements QueryResponseTransformer {
+
+  public HtmlResultSetTransformer() {
+    super();
+  }
+
+  public HtmlResultSetTransformer(List<HtmlCategoryModel> categoryList) {
+    super(categoryList);
+  }
 
   @Override
   public BinaryContent transform(SourceResponse sourceResponse, Map<String, Serializable> map)
@@ -45,7 +54,7 @@ public class HtmlResultSetTransformer extends HtmlMetacard implements QueryRespo
     List<HtmlMetacardModel> metacardModels = new ArrayList<>();
 
     for (Metacard metacard : metacards) {
-      metacardModels.add(new HtmlMetacardModel(metacard, new ArrayList<>()));
+      metacardModels.add(new HtmlMetacardModel(metacard, getCategoryList()));
     }
 
     String html = buildHtml(metacardModels);

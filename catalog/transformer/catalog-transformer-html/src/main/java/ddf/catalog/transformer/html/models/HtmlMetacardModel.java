@@ -19,17 +19,21 @@ import java.util.List;
 
 public class HtmlMetacardModel {
 
+  private String title;
+
   private Metacard metacard;
 
   private List<HtmlCategoryModel> categories;
 
   public HtmlMetacardModel(Metacard metacard) {
     this.metacard = metacard;
+    this.title = metacard.getTitle();
     this.categories = new ArrayList<>();
   }
 
   public HtmlMetacardModel(Metacard metacard, List<HtmlCategoryModel> categories) {
     this.metacard = metacard;
+    this.title = metacard.getTitle();
     this.categories = categories;
 
     this.applyMetacard();

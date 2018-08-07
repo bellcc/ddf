@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import org.apache.commons.lang.WordUtils;
 
 public class HtmlCategoryModel {
 
@@ -27,12 +28,6 @@ public class HtmlCategoryModel {
   private List<String> attributeList;
 
   private Map<String, Object> attributeMappings;
-
-  public HtmlCategoryModel() {
-    this.title = "";
-    this.attributeList = new ArrayList<>();
-    this.attributeMappings = new TreeMap<>();
-  }
 
   public HtmlCategoryModel(String title, List<String> attributeList) {
     this.title = title;
@@ -69,18 +64,28 @@ public class HtmlCategoryModel {
 
     for (String attrKey : attributeList) {
       // TODO Figure out what the difference between getValue() is and getValues()
-      // TODO Replace the key with a human readable attribute value
-
+      String readableKey = getHumanReadableProperty(attrKey);
       Attribute attr = metacard.getAttribute(attrKey);
 
       if (attr == null) {
-        this.attributeMappings.put(attrKey, new HtmlEmptyValueModel());
+        this.attributeMappings.put(readableKey, new HtmlEmptyValueModel());
       } else if (attrKey.equals("thumbnail")) {
         byte[] imageData = (byte[]) attr.getValue();
-        this.attributeMappings.put(attrKey, new HtmlMediaModel(imageData));
+        this.attributeMappings.put(readableKey, new HtmlMediaModel(imageData));
       } else {
-        this.attributeMappings.put(attrKey, new HtmlBasicValueModel(attr.getValue()));
+        this.attributeMappings.put(readableKey, new HtmlBasicValueModel(attr.getValue()));
       }
     }
+  }
+
+  private String getHumanReadableProperty(String attr) {
+    int periodIndex = attr.lastIndexOf('.');
+    if (periodIndex != -1) {
+      attr = attr.substring(periodIndex + 1, attr.length());
+    }
+
+    attr = attr.replaceAll("-", " ");
+
+    return WordUtils.capitalizeFully(attr);
   }
 }
