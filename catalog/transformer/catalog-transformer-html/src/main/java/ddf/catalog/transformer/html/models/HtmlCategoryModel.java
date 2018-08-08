@@ -63,7 +63,7 @@ public class HtmlCategoryModel {
 
     for (String attrKey : attributeList) {
       // TODO Figure out what the difference between getValue() is and getValues()
-      String readableKey = getHumanReadableProperty(attrKey);
+      String readableKey = getHumanReadableAttribute(attrKey);
       Attribute attr = metacard.getAttribute(attrKey);
 
       if (attr == null) {
@@ -77,7 +77,7 @@ public class HtmlCategoryModel {
     }
   }
 
-  private String getHumanReadableProperty(String attr) {
+  private String getHumanReadableAttribute(String attr) {
     int periodIndex = attr.lastIndexOf('.');
     if (periodIndex != -1) {
       attr = attr.substring(periodIndex + 1, attr.length());
