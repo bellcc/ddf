@@ -17,6 +17,7 @@ import ddf.catalog.data.BinaryContent;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.resource.DataUsageLimitExceededException;
 import ddf.catalog.resource.Resource;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -177,11 +178,20 @@ public class RESTEndpoint implements RESTService {
     ResponseBuilder responseBuilder;
 
     final BinaryContent content = catalogService.getSourcesInfo();
-    responseBuilder = Response.ok(content.getInputStream(), content.getMimeTypeValue());
 
-    // Add the Accept-ranges header to let the client know that we accept ranges in bytes
-    responseBuilder.header(HEADER_ACCEPT_RANGES, BYTES);
-    return responseBuilder.build();
+    try (InputStream inputStream = content.getInputStream()) {
+      responseBuilder = Response.ok(inputStream, content.getMimeTypeValue());
+
+      // Add the Accept-ranges header to let the client know that we accept ranges in bytes
+      responseBuilder.header(HEADER_ACCEPT_RANGES, BYTES);
+      responseBuilder.header(HEADER_ACCEPT_RANGES, BYTES);
+      return responseBuilder.build();
+
+    } catch (IOException e) {
+      String exceptionMessage = "Unknown error occurred while processing request: ";
+      LOGGER.info(exceptionMessage, e);
+      throw new InternalServerErrorException(exceptionMessage);
+    }
   }
 
   /**
@@ -224,19 +234,26 @@ public class RESTEndpoint implements RESTService {
       }
 
       LOGGER.debug("Read and transform complete, preparing response.");
-      responseBuilder = Response.ok(content.getInputStream(), content.getMimeTypeValue());
 
-      // Add the Accept-ranges header to let the client know that we accept ranges in bytes
-      responseBuilder.header(HEADER_ACCEPT_RANGES, BYTES);
+      try (InputStream inputStream = content.getInputStream()) {
+        responseBuilder = Response.ok(inputStream, content.getMimeTypeValue());
 
-      setFileNameOnResponseBuilder(id, content, responseBuilder);
+        // Add the Accept-ranges header to let the client know that we accept ranges in bytes
+        responseBuilder.header(HEADER_ACCEPT_RANGES, BYTES);
 
-      long size = content.getSize();
-      if (size > 0) {
-        responseBuilder.header(HEADER_CONTENT_LENGTH, size);
+        setFileNameOnResponseBuilder(id, content, responseBuilder);
+
+        long size = content.getSize();
+        if (size > 0) {
+          responseBuilder.header(HEADER_CONTENT_LENGTH, size);
+        }
+
+        return responseBuilder.build();
+      } catch (IOException e) {
+        String exceptionMessage = "Unknown error occurred while processing request: ";
+        LOGGER.info(exceptionMessage, e);
+        throw new InternalServerErrorException(exceptionMessage);
       }
-
-      return responseBuilder.build();
 
     } catch (CatalogServiceException e) {
       return createBadRequestResponse(e.getMessage());
@@ -263,9 +280,16 @@ public class RESTEndpoint implements RESTService {
     try {
       final BinaryContent content = catalogService.createMetacard(multipartBody, transformerParam);
 
-      Response.ResponseBuilder responseBuilder =
-          Response.ok(content.getInputStream(), content.getMimeTypeValue());
-      return responseBuilder.build();
+      try (InputStream inputStream = content.getInputStream()) {
+        Response.ResponseBuilder responseBuilder =
+            Response.ok(inputStream, content.getMimeTypeValue());
+        return responseBuilder.build();
+      } catch (IOException e) {
+        String exceptionMessage = "Unknown error occurred while processing request: ";
+        LOGGER.info(exceptionMessage, e);
+        throw new InternalServerErrorException(exceptionMessage);
+      }
+
     } catch (CatalogServiceException e) {
       return createBadRequestResponse(e.getMessage());
     }
