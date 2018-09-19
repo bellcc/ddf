@@ -14,7 +14,6 @@
 package org.codice.ddf.catalog.ui.query.transform;
 
 import ddf.catalog.data.Attribute;
-import org.codice.ddf.catalog.ui.query.transform.QueryValueTransformer.Priority;
 
 /**
  * <b> This code is experimental. While this interface is functional and tested, it may change or be
