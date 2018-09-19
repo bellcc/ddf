@@ -47,6 +47,8 @@ public class QueryTransformer {
       EndpointUtil endpointUtil, List<QueryValueTransformer> queryValueTransformers) {
     this.endpointUtil = endpointUtil;
     this.queryValueTransformers = queryValueTransformers;
+
+    Collections.sort(queryValueTransformers);
   }
 
   public Map<String, Object> transformMetacardIntoMap(Metacard metacard) {
@@ -122,6 +124,7 @@ public class QueryTransformer {
 
   public void setQueryValueTransformers(List<QueryValueTransformer> queryValueTransformers) {
     this.queryValueTransformers = queryValueTransformers;
+    Collections.sort(queryValueTransformers);
   }
 
   public List<QueryValueTransformer> getQueryValueTransformers() {

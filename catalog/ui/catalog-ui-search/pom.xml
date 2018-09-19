@@ -340,6 +340,25 @@
             <artifactId>spatial-csw-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+<<<<<<< HEAD
+=======
+      <dependency>
+        <groupId>ddf.mime.core</groupId>
+        <artifactId>mime-core-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codice.thirdparty</groupId>
+        <artifactId>tika-bundle</artifactId>
+        <version>${tika.thirdparty.bundle.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.8.5</version>
+        <scope>test</scope>
+      </dependency>
+>>>>>>> DDF-3811 Pulled embedded query metacards out of their workspace metacard
         <dependency>
             <groupId>ddf.mime.core</groupId>
             <artifactId>mime-core-api</artifactId>
@@ -361,6 +380,7 @@
             <version>${usng4j.version}</version>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>ddf.mime.core</groupId>
             <artifactId>mime-core-api</artifactId>
@@ -398,8 +418,25 @@
             <version>${usng4j.version}</version>
             <scope>test</scope>
         </dependency>
+=======
+      <dependency>
+        <groupId>ddf.mime.core</groupId>
+        <artifactId>mime-core-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codice.thirdparty</groupId>
+        <artifactId>tika-bundle</artifactId>
+        <version>${tika.thirdparty.bundle.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>${gson.version}</version>
+        <scope>test</scope>
+      </dependency>
+>>>>>>> DDF-3811 Pulled embedded query metacards out of their workspace metacard
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
