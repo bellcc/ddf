@@ -242,12 +242,6 @@
     <service ref="removeMetacardTagsTransformation"
              interface="org.codice.ddf.catalog.ui.metacard.workspace.transformer.WorkspaceTransformation"/>
 
-    <bean id="queryMetacardsTransformation"
-          class="org.codice.ddf.catalog.ui.metacard.workspace.transformer.impl.EmbeddedQueryMetacardsHandler"/>
-
-    <service ref="queryMetacardsTransformation"
-             interface="org.codice.ddf.catalog.ui.metacard.workspace.transformer.WorkspaceTransformation"/>
-
     <bean id="listMetacardsTransformation"
           class="org.codice.ddf.catalog.ui.metacard.workspace.transformer.impl.EmbeddedListMetacardsHandler">
         <argument ref="metacardActionRegistry"/>
@@ -353,6 +347,32 @@
         <argument ref="userCreatableMetacardType"/>
     </bean>
 
+    <bean id="basicValueTransformer" class="org.codice.ddf.catalog.ui.query.transform.QueryBasicValueTransformer"/>
+
+    <service ref="basicValueTransformer"
+      interface="org.codice.ddf.catalog.ui.query.transform.QueryValueTransformer"/>
+
+    <bean id="listValueTransformer" class="org.codice.ddf.catalog.ui.query.transform.QueryListValueTransformer"/>
+
+    <service ref="listValueTransformer"
+      interface="org.codice.ddf.catalog.ui.query.transform.QueryValueTransformer"/>
+
+    <bean id="sortsValueTransformer" class="org.codice.ddf.catalog.ui.query.transform.QuerySortsValueTransformer"/>
+
+    <service ref="sortsValueTransformer"
+      interface="org.codice.ddf.catalog.ui.query.transform.QueryValueTransformer"/>
+
+    <bean id="queryValueTransformers" class="org.codice.ddf.platform.util.SortedServiceList"/>
+    <reference-list interface="org.codice.ddf.catalog.ui.query.transform.QueryValueTransformer"
+      availability="optional">
+        <reference-listener ref="queryValueTransformers" bind-method="bindPlugin" unbind-method="unbindPlugin"/>
+    </reference-list>
+
+    <bean id="queryTransformer" class="org.codice.ddf.catalog.ui.metacard.workspace.transformer.impl.QueryTransformer">
+        <argument ref="endpointUtil"/>
+        <argument ref="queryValueTransformers"/>
+    </bean>
+
     <bean id="metacardApplication" class="org.codice.ddf.catalog.ui.metacard.MetacardApplication">
         <argument ref="catalogFramework"/>
         <argument ref="filterBuilder"/>
@@ -370,6 +390,8 @@
         <argument ref="configurationApplication"/>
         <argument ref="noteUtil"/>
         <argument ref="subjectIdentity"/>
+        <argument ref="queryTransformer"/>
+        <argument ref="queryWorkspaceService"/>
     </bean>
 
     <reference id="coordinateSystemTranslator" interface="org.codice.usng4j.CoordinateSystemTranslator"
@@ -569,6 +591,7 @@
         </argument>
         <argument ref="securityService"/>
         <argument ref="persistentStore"/>
+        <argument ref="filterBuilder"/>
         <property name="maxSubscriptions" value="100"/>
     </bean>
 

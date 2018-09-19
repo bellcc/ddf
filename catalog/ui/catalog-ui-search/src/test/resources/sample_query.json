@@ -1,0 +1,29 @@
+{
+  "cql": "(\"anyText\" ILIKE '%')",
+  "filterTree": "{\"property\":\"anyText\",\"value\":\"\",\"type\":\"ILIKE\"}",
+  "title": "Title",
+  "excludeUnnecessaryAttributes": true,
+  "count": 250,
+  "start": 1,
+  "federation": "enterprise",
+  "sorts": [
+    {
+      "attribute": "modified",
+      "direction": "descending"
+    },
+    {
+      "attribute": "associations.external",
+      "direction": "descending"
+    },
+    {
+      "attribute": "RELEVANCE",
+      "direction": "descending"
+    }
+  ],
+  "serverPageIndex": 0,
+  "type": "basic",
+  "isLocal": false,
+  "isOutdated": true,
+  "id": "queryId",
+  "color": "#24ff24"
+}
