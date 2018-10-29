@@ -103,7 +103,7 @@ Query.Model = Backbone.AssociatedModel.extend({
       'isLocal',
       'serverPageIndex',
       'result',
-      'hasBeenSaved'
+      'hasBeenSaved',
     ])
     this.set(_merge(defaults, overridenDefaults))
     this.trigger('resetToDefaults')
