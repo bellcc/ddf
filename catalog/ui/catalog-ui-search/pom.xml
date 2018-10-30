@@ -361,22 +361,43 @@
             <version>${usng4j.version}</version>
             <scope>test</scope>
         </dependency>
-      <dependency>
-        <groupId>ddf.mime.core</groupId>
-        <artifactId>mime-core-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codice.thirdparty</groupId>
-        <artifactId>tika-bundle</artifactId>
-        <version>${tika.thirdparty.bundle.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>${gson.version}</version>
-        <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>ddf.mime.core</groupId>
+            <artifactId>mime-core-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codice.thirdparty</groupId>
+            <artifactId>tika-bundle</artifactId>
+            <version>${tika.thirdparty.bundle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ddf.mime.core</groupId>
+            <artifactId>mime-core-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codice.thirdparty</groupId>
+            <artifactId>tika-bundle</artifactId>
+            <version>${tika.thirdparty.bundle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ddf.platform.usng4j</groupId>
+            <artifactId>platform-usng4j-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codice.usng4j</groupId>
+            <artifactId>usng4j-impl</artifactId>
+            <version>${usng4j.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
