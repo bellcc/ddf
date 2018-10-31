@@ -362,11 +362,9 @@
     <service ref="sortsValueTransformer"
       interface="org.codice.ddf.catalog.ui.query.transform.QueryValueTransformer"/>
 
-    <bean id="queryValueTransformers" class="org.codice.ddf.platform.util.SortedServiceList"/>
-    <reference-list interface="org.codice.ddf.catalog.ui.query.transform.QueryValueTransformer"
-      availability="optional">
-        <reference-listener ref="queryValueTransformers" bind-method="bindPlugin" unbind-method="unbindPlugin"/>
-    </reference-list>
+    <reference-list id="queryValueTransformers"
+      interface="org.codice.ddf.catalog.ui.query.transform.QueryValueTransformer"
+      availability="optional"/>
 
     <bean id="queryTransformer" class="org.codice.ddf.catalog.ui.metacard.workspace.transformer.impl.QueryTransformer">
         <argument ref="endpointUtil"/>
