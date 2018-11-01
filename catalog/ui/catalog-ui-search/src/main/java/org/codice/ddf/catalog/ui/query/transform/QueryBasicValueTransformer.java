@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class QueryBasicValueTransformer implements QueryValueTransformer {
 
   @Override
-  public boolean filter(String key, Object value) {
+  public boolean canHandle(String key, Object value) {
     return value instanceof Serializable;
   }
 

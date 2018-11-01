@@ -32,13 +32,13 @@ public class QueryBasicValueTransformerTest {
 
   @Test
   public void testValidBasicValueFilter() {
-    boolean result = transformer.filter(null, "");
+    boolean result = transformer.canHandle(null, "");
     assertThat(result, is(true));
   }
 
   @Test
   public void testInvalidBasicValueFilter() {
-    boolean result = transformer.filter(null, null);
+    boolean result = transformer.canHandle(null, null);
     assertThat(result, is(false));
   }
 

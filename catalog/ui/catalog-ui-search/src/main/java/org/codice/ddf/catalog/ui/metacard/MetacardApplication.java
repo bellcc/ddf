@@ -24,6 +24,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.codice.ddf.catalog.ui.metacard.workspace.QueryMetacardTypeImpl.QUERY_TAG;
+import static org.codice.ddf.catalog.ui.metacard.workspace.WorkspaceConstants.WORKSPACE_QUERIES;
 import static spark.Spark.after;
 import static spark.Spark.delete;
 import static spark.Spark.exception;
@@ -471,6 +472,7 @@ public class MetacardApplication implements SparkApplication {
           return ImmutableMap.builder()
               .putAll(transformer.transform(metacard))
               .put("subscribed", isSubscribed)
+              .put(WORKSPACE_QUERIES, getAssociatedMetacardIdModel(metacard))
               .build();
         },
         util::getJson);
@@ -510,10 +512,11 @@ public class MetacardApplication implements SparkApplication {
                   metacard -> {
                     boolean isSubscribed = ids.contains(metacard.getId());
                     try {
-                      return ImmutableMap.builder()
-                          .putAll(transformer.transform(metacard))
-                          .put("subscribed", isSubscribed)
-                          .build();
+                      Map<String, Object> workspace =
+                          new HashMap<>(transformer.transform(metacard));
+                      workspace.put(WORKSPACE_QUERIES, getAssociatedMetacardIdModel(metacard));
+                      workspace.put("subscribed", isSubscribed);
+                      return workspace;
                     } catch (RuntimeException e) {
                       LOGGER.debug(
                           "Could not transform metacard. WARNING: This indicates there is invalid data in the system. Metacard title: '{}', id:'{}'",
@@ -535,11 +538,14 @@ public class MetacardApplication implements SparkApplication {
           Map<String, Object> incoming =
               JsonFactory.create().parser().parseMap(util.safeGetBody(req));
           Metacard saved = saveMetacard(transformer.transform(incoming));
-          Map<String, Object> response = transformer.transform(saved);
+
+          Map<String, Object> workspace = new HashMap<>(transformer.transform(saved));
+          workspace.put(WORKSPACE_QUERIES, getAssociatedMetacardIdModel(saved));
 
           res.status(201);
-          return util.getJson(response);
-        });
+          return workspace;
+        },
+        util::getJson);
 
     put(
         "/workspaces/:id",
@@ -552,8 +558,12 @@ public class MetacardApplication implements SparkApplication {
           metacard.setAttribute(new AttributeImpl(Core.ID, id));
 
           Metacard updated = updateMetacard(id, metacard);
-          return util.getJson(transformer.transform(updated));
-        });
+
+          Map<String, Object> workspaceMap = new HashMap<>(transformer.transform(updated));
+          workspaceMap.put(WORKSPACE_QUERIES, getAssociatedMetacardIdModel(updated));
+          return workspaceMap;
+        },
+        util::getJson);
 
     delete(
         "/workspaces/:id",
@@ -1184,5 +1194,16 @@ public class MetacardApplication implements SparkApplication {
     public InputStream openStream() throws IOException {
       return supplier.get();
     }
+  }
+
+  private List<Map<String, Serializable>> getAssociatedMetacardIdModel(List<Serializable> ids) {
+    return ids.stream().map(id -> ImmutableMap.of("id", id)).collect(Collectors.toList());
+  }
+
+  private List<Map<String, Serializable>> getAssociatedMetacardIdModel(Metacard metacard) {
+    Attribute attr = metacard.getAttribute(WORKSPACE_QUERIES);
+    List<Serializable> ids = attr == null ? Collections.emptyList() : attr.getValues();
+
+    return getAssociatedMetacardIdModel(ids);
   }
 }

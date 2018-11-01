@@ -34,13 +34,13 @@ public class QueryListValueTransformerTest {
 
   @Test
   public void testValidListValueFilter() {
-    boolean result = this.transformer.filter(null, new ValueList(true));
+    boolean result = this.transformer.canHandle(null, new ValueList(true));
     assertThat(result, is(true));
   }
 
   @Test
   public void testInvalidListValueFilter() {
-    boolean result = this.transformer.filter(null, Collections.emptyList());
+    boolean result = this.transformer.canHandle(null, Collections.emptyList());
     assertThat(result, is(false));
   }
 

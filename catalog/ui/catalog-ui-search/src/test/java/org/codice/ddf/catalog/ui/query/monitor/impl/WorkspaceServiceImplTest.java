@@ -240,6 +240,7 @@ public class WorkspaceServiceImplTest {
       throws UnsupportedQueryException, SourceUnavailableException, FederationException {
     WorkspaceMetacardImpl workspace = mock(WorkspaceMetacardImpl.class);
     doReturn("workspaceId").when(workspace).getId();
+    doReturn(Arrays.asList("queryId1", "queryId2")).when(workspace).getQueries();
 
     List<Result> queryResults = getMockQueryResults();
 

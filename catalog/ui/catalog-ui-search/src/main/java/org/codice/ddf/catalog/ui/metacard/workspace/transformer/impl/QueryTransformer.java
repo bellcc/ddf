@@ -115,7 +115,7 @@ public class QueryTransformer {
 
     return transformers
         .stream()
-        .filter(transformer -> transformer.filter(key, value))
+        .filter(transformer -> transformer.canHandle(key, value))
         .findFirst()
         .orElse(null);
   }

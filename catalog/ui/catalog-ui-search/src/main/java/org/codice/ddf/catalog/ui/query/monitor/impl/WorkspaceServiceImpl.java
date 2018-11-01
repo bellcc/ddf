@@ -136,6 +136,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
   public List<QueryMetacardImpl> getQueryMetacards(WorkspaceMetacardImpl workspaceMetacard) {
     List<String> queryIds = workspaceMetacard.getQueries();
 
+    if (queryIds.isEmpty()) {
+      LOGGER.trace(
+          "Workspace metacard with id [{}] does not contain any queries",
+          workspaceMetacard.getId());
+      return Collections.emptyList();
+    }
+
     Query query = new QueryImpl(getQueriesFilter(queryIds));
     QueryRequest queryRequest = new QueryRequestImpl(query);
 

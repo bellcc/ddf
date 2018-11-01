@@ -38,13 +38,13 @@ public class QuerySortsValueTransformerTest {
 
   @Test
   public void testValidSortsValueFilter() {
-    boolean result = transformer.filter(QUERY_SORTS, null);
+    boolean result = transformer.canHandle(QUERY_SORTS, null);
     assertThat(result, is(true));
   }
 
   @Test
   public void testInvalidSortsValueFilter() {
-    boolean result = transformer.filter(Core.ID, null);
+    boolean result = transformer.canHandle(Core.ID, null);
     assertThat(result, is(false));
   }
 

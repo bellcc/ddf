@@ -23,7 +23,7 @@ import org.boon.core.value.ValueList;
 public class QueryListValueTransformer implements QueryValueTransformer {
 
   @Override
-  public boolean filter(String key, Object value) {
+  public boolean canHandle(String key, Object value) {
     return value instanceof ValueList;
   }
 

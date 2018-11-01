@@ -25,7 +25,7 @@ import org.codice.ddf.catalog.ui.metacard.workspace.QueryMetacardTypeImpl;
 public class QuerySortsValueTransformer implements QueryValueTransformer {
 
   @Override
-  public boolean filter(String key, Object value) {
+  public boolean canHandle(String key, Object value) {
     return QueryMetacardTypeImpl.QUERY_SORTS.equals(key);
   }
 

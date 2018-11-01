@@ -34,7 +34,7 @@ public interface QueryValueTransformer extends Comparable<QueryValueTransformer>
    * @param value The value of the field
    * @return True if this field should be handled by this transformer and false otherwise
    */
-  boolean filter(String key, Object value);
+  boolean canHandle(String key, Object value);
 
   /**
    * Creates a metacard attribute for a given key and value
