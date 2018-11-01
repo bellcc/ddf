@@ -20,7 +20,7 @@ import org.codice.ddf.catalog.ui.query.transform.QueryValueTransformer.Priority;
  * <b> This code is experimental. While this interface is functional and tested, it may change or be
  * removed in a future version of the library. </b>
  */
-public interface QueryValueTransformer extends Comparable {
+public interface QueryValueTransformer extends Comparable<QueryValueTransformer> {
 
   enum Priority {
     FIELD,

@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableMap;
 import ddf.catalog.data.Attribute;
 import ddf.catalog.data.Metacard;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +47,6 @@ public class QueryTransformer {
       EndpointUtil endpointUtil, List<QueryValueTransformer> queryValueTransformers) {
     this.endpointUtil = endpointUtil;
     this.queryValueTransformers = queryValueTransformers;
-
-    Collections.sort(queryValueTransformers);
   }
 
   public Map<String, Object> transformMetacardIntoMap(Metacard metacard) {
@@ -111,7 +110,10 @@ public class QueryTransformer {
   }
 
   private QueryValueTransformer getQueryValueTransformer(String key, Object value) {
-    return queryValueTransformers
+    List<QueryValueTransformer> transformers = new ArrayList<>(queryValueTransformers);
+    Collections.sort(transformers);
+
+    return transformers
         .stream()
         .filter(transformer -> transformer.filter(key, value))
         .findFirst()
@@ -120,7 +122,6 @@ public class QueryTransformer {
 
   public void setQueryValueTransformers(List<QueryValueTransformer> queryValueTransformers) {
     this.queryValueTransformers = queryValueTransformers;
-    Collections.sort(queryValueTransformers);
   }
 
   public List<QueryValueTransformer> getQueryValueTransformers() {

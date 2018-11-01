@@ -50,7 +50,7 @@ public class QueryListValueTransformer implements QueryValueTransformer {
   }
 
   @Override
-  public int compareTo(Object o) {
-    return this.getPriority().ordinal() - ((QueryValueTransformer) o).getPriority().ordinal();
+  public int compareTo(QueryValueTransformer o) {
+    return this.getPriority().ordinal() - o.getPriority().ordinal();
   }
 }
