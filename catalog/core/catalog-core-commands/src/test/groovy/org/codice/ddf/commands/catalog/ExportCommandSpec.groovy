@@ -13,6 +13,8 @@
  */
 package org.codice.ddf.commands.catalog
 
+import java.io.File
+import java.util.regex.Pattern
 import ddf.catalog.CatalogFramework
 import ddf.catalog.content.StorageProvider
 import ddf.catalog.data.BinaryContent
@@ -30,6 +32,7 @@ import ddf.catalog.resource.impl.ResourceImpl
 import ddf.catalog.source.CatalogProvider
 import ddf.catalog.transform.MetacardTransformer
 import org.apache.karaf.shell.api.console.Session
+import org.codice.ddf.commands.util.DigitalSignature
 import org.osgi.framework.BundleContext
 import org.osgi.framework.ServiceReference
 import spock.lang.Ignore
@@ -52,6 +55,8 @@ class ExportCommandSpec extends Specification {
 
     ExportCommand exportCommand
 
+    DigitalSignature signer
+
     void setup() {
         tmpHomeDir = File.createTempDir()
         System.setProperty("ddf.home", tmpHomeDir.canonicalPath)
@@ -71,8 +76,15 @@ class ExportCommandSpec extends Specification {
 
         catalogFramework = Mock(CatalogFramework)
 
-        exportCommand = new ExportCommand(filterBuilder: new GeotoolsFilterBuilder(),
-                bundleContext: bundleContext, catalogFramework: catalogFramework)
+        signer = Mock(DigitalSignature)
+
+        signer.createDigitalSignature(_ as InputStream, _ as String, _ as String) >> { file -> return new byte[0] }
+        signer.verifyDigitalSignature(_ as InputStream, _ as InputStream, _ as File) >> { data, signature  -> return true }
+
+        exportCommand = new ExportCommand(signer)
+        exportCommand.filterBuilder = new GeotoolsFilterBuilder()
+        exportCommand.bundleContext = bundleContext
+        exportCommand.catalogFramework = catalogFramework
     }
 
     void cleanup() {
@@ -105,8 +117,7 @@ class ExportCommandSpec extends Specification {
         def bundleContext = Mock(BundleContext) {
             getServiceReferences(_, _) >> []
         }
-        def exportCommand = new ExportCommand(filterBuilder: new GeotoolsFilterBuilder(),
-                bundleContext: bundleContext, catalogFramework: catalogFramework)
+        exportCommand.bundleContext = bundleContext
 
         when:
         exportCommand.executeWithSubject()
