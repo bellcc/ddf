@@ -131,13 +131,12 @@ import org.codice.ddf.catalog.ui.metacard.history.HistoryResponse;
 import org.codice.ddf.catalog.ui.metacard.notes.NoteConstants;
 import org.codice.ddf.catalog.ui.metacard.notes.NoteMetacard;
 import org.codice.ddf.catalog.ui.metacard.notes.NoteUtil;
-import org.codice.ddf.catalog.ui.metacard.query.data.metacard.QueryMetacardImpl;
 import org.codice.ddf.catalog.ui.metacard.transform.CsvTransform;
 import org.codice.ddf.catalog.ui.metacard.validation.Validator;
 import org.codice.ddf.catalog.ui.metacard.workspace.WorkspaceConstants;
 import org.codice.ddf.catalog.ui.metacard.workspace.WorkspaceMetacardImpl;
 import org.codice.ddf.catalog.ui.metacard.workspace.transformer.WorkspaceTransformer;
-import org.codice.ddf.catalog.ui.metacard.workspace.transformer.impl.AssociatedQueryMetacardsHandler;
+import org.codice.ddf.catalog.ui.metacard.workspace.transformer.impl.AssociatedMetacardHandler;
 import org.codice.ddf.catalog.ui.query.monitor.api.WorkspaceService;
 import org.codice.ddf.catalog.ui.security.AccessControlSecurityConfiguration;
 import org.codice.ddf.catalog.ui.security.Constants;
@@ -210,7 +209,7 @@ public class MetacardApplication implements SparkApplication {
 
   private final WorkspaceService workspaceService;
 
-  private final AssociatedQueryMetacardsHandler queryMetacardsHandler;
+  private final AssociatedMetacardHandler associatedMetacardHandler;
 
   public MetacardApplication(
       CatalogFramework catalogFramework,
@@ -229,7 +228,7 @@ public class MetacardApplication implements SparkApplication {
       SubjectIdentity subjectIdentity,
       AccessControlSecurityConfiguration accessControlSecurityConfiguration,
       WorkspaceService workspaceService,
-      AssociatedQueryMetacardsHandler queryMetacardsHandler) {
+      AssociatedMetacardHandler associatedMetacardHandler) {
     this.catalogFramework = catalogFramework;
     this.filterBuilder = filterBuilder;
     this.util = endpointUtil;
@@ -246,7 +245,7 @@ public class MetacardApplication implements SparkApplication {
     this.subjectIdentity = subjectIdentity;
     this.accessControlSecurityConfiguration = accessControlSecurityConfiguration;
     this.workspaceService = workspaceService;
-    this.queryMetacardsHandler = queryMetacardsHandler;
+    this.associatedMetacardHandler = associatedMetacardHandler;
   }
 
   private String getSubjectEmail() {
@@ -580,9 +579,13 @@ public class MetacardApplication implements SparkApplication {
                   .map(transformer::transform)
                   .collect(Collectors.toList());
 
-          queryMetacardsHandler.create(Collections.emptyList(), queries);
+          // TODO Verify that creating a workspace from a full workspace still works.
+          Metacard workspace = transformer.transform(incoming);
+          workspace =
+              associatedMetacardHandler.create(
+                  workspace, queries, WorkspaceConstants.WORKSPACE_QUERIES);
 
-          Metacard saved = saveMetacard(transformer.transform(incoming));
+          Metacard saved = saveMetacard(workspace);
           Map<String, Object> response = transformer.transform(saved);
 
           res.status(201);
@@ -595,8 +598,7 @@ public class MetacardApplication implements SparkApplication {
         (req, res) -> {
           String id = req.params(":id");
 
-          WorkspaceMetacardImpl existingWorkspace = workspaceService.getWorkspaceMetacard(id);
-          List<String> existingQueryIds = existingWorkspace.getQueries();
+          Metacard workspace = workspaceService.getWorkspaceMetacard(id);
 
           Map<String, Object> updatedWorkspace =
               GSON.fromJson(util.safeGetBody(req), MAP_STRING_TO_OBJECT_TYPE);
@@ -608,28 +610,11 @@ public class MetacardApplication implements SparkApplication {
                   .map(transformer::transform)
                   .collect(Collectors.toList());
 
-          List<String> updatedQueryIds =
-              updatedQueryMetacards.stream().map(Metacard::getId).collect(Collectors.toList());
+          workspace =
+              associatedMetacardHandler.handleAllOperations(
+                  workspace, updatedQueryMetacards, WorkspaceConstants.WORKSPACE_QUERIES);
 
-          List<QueryMetacardImpl> existingQueryMetacards =
-              workspaceService.getQueryMetacards(existingWorkspace);
-
-          queryMetacardsHandler.create(existingQueryIds, updatedQueryMetacards);
-          queryMetacardsHandler.delete(existingQueryIds, updatedQueryIds);
-          queryMetacardsHandler.update(
-              existingQueryIds, existingQueryMetacards, updatedQueryMetacards);
-
-          List<Map<String, String>> queryIdModel =
-              updatedQueryIds
-                  .stream()
-                  .map(queryId -> ImmutableMap.of("id", queryId))
-                  .collect(Collectors.toList());
-
-          updatedWorkspace.put("queries", queryIdModel);
-          Metacard metacard = transformer.transform(updatedWorkspace);
-          metacard.setAttribute(new AttributeImpl(Core.ID, id));
-          Metacard updated = updateMetacard(id, metacard);
-
+          Metacard updated = updateMetacard(id, workspace);
           return transformer.transform(updated);
         },
         util::getJson);
